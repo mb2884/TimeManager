@@ -6,14 +6,17 @@
 #-----------------------------------------------------------------------
 
 import os
-import time
 import flask
-import database
+#import database
 import auth
 
 #-----------------------------------------------------------------------
 
-app = flask.Flask(__name__, template_folder='.')
+app = flask.Flask(__name__)
+
+# Set the static folder
+app.static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+
 
 app.secret_key = os.environ['APP_SECRET_KEY']
 
