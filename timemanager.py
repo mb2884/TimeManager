@@ -13,12 +13,12 @@ from datetime import datetime, timedelta
 
 #-----------------------------------------------------------------------
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, )
 
 # Set the static folder
 app.static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 
-
+os.environ['APP_SECRET_KEY'] = 'secretkey'
 app.secret_key = os.environ['APP_SECRET_KEY']
 
 #-----------------------------------------------------------------------
