@@ -1,24 +1,27 @@
 #!/usr/bin/env python
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # database.py
 # Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 import sqlalchemy.ext.declarative
 import sqlalchemy
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
-class app_user(Base):
+
+class AppUser(Base):
     __tablename__ = 'app_user'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     username = sqlalchemy.Column(sqlalchemy.Text)
 
-class app_event(Base):
+
+class AppEvent(Base):
     __tablename__ = 'app_event'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer)
+    user_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey('app_user.id'))
     group_id = sqlalchemy.Column(sqlalchemy.Integer)
     title = sqlalchemy.Column(sqlalchemy.Text)
     descrip = sqlalchemy.Column(sqlalchemy.Text)
@@ -26,11 +29,12 @@ class app_event(Base):
     end_time = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     all_day = sqlalchemy.Column(sqlalchemy.Boolean)
 
-class app_task(Base):
+
+class AppTask(Base):
     __tablename__ = 'app_task'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer)
-    event_id = sqlalchemy.Column(sqlalchemy.Integer)
+    user_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey('app_user.id'))
     group_id = sqlalchemy.Column(sqlalchemy.Integer)
     title = sqlalchemy.Column(sqlalchemy.Text)
     descrip = sqlalchemy.Column(sqlalchemy.Text)
