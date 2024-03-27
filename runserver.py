@@ -18,12 +18,6 @@ def main():
                         ' server should listen')
     port = parser.parse_args().port
 
-    if len(sys.argv) != 2:
-        print('Usage: ' + sys.argv[0] + ' port', file=sys.stderr)
-        sys.exit(1)
-
-    
-
     try:
         timemanager.app.run(host='localhost', port=port, debug=True)
     except Exception as ex:

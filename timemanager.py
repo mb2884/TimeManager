@@ -7,7 +7,7 @@
 
 import os
 import flask
-# import database
+import dbfuncs as database
 # import auth
 
 #-----------------------------------------------------------------------
@@ -33,6 +33,17 @@ app.secret_key = os.environ['APP_SECRET_KEY']
 #     return auth.logoutcas()
 
 #-----------------------------------------------------------------------
+@app.route('/add-event', methods=['GET'])
+def events():
+    title = flask.request.args.get('title')
+    start = flask.request.args.get('start')
+    end = flask.request.args.get('end')
+    all_day = flask.request.args.get('allDay')
+    database.addEvent(title, start, end, all_day)
+    print(database.getEvents())
+    
+    return
+
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():

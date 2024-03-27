@@ -3,12 +3,10 @@
 <head>
 <meta charset='utf-8' />
 <script src='static/fullcalendar/dist/index.global.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-
-
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
       headerToolbar: {
@@ -30,6 +28,25 @@
             allDay: arg.allDay
           })
         }
+
+        let encodedTitle = encodeURIComponent(title);
+        let encodedStart = encodeURIComponent(arg.start);
+        let encodedEnd = encodeURIComponent(arg.end);
+        let allDay = Boolean(arg.allDay);
+        // let encodedAllDay = encodeURIComponent(allDay);
+
+        let url = '/add-event?title=' + encodedTitle + '&start=' + encodedStart + '&end=' + encodedEnd + '&allDay=' + allDay;
+        let requestData = {
+          type:'GET',
+          url: url,
+          success: function(response) {
+            console.log(response);
+          },
+          error: function(response) {
+            console.log(response);
+          }
+        };
+        $.ajax(requestData);
         calendar.unselect()
       },
       eventClick: function(arg) {
