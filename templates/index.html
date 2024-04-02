@@ -57,13 +57,13 @@
               url: '/add-event',
               contentType: 'application/json',
               data: JSON.stringify({
+                username: '{{username}}',
                 title: title,
                 start: arg.start.toISOString(),
                 end: arg.end.toISOString(),
                 allDay: arg.allDay
               }),
               success: function (response) {
-                console.log(response.id);
                 if (response.id) {
                   calendar.addEvent({
                     title: title,

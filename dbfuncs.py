@@ -18,13 +18,34 @@ DATABASE_URL = 'postgresql://timemanager_c52x_user:XYwubY5k8RCdkL19NysChiHfsVgeM
 
 # -----------------------------------------------------------------------
 
+def get_user_id(username):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
 
-def addEvent(title, start_time, end_time, all_day):
+        with sqlalchemy.orm.Session(engine) as session:
+            # Query the AppUser object from the database
+            app_user = session.query(database.AppUser).filter_by(username=username).first()
+
+            if app_user:
+                return app_user.id
+            else:
+                # Create a new AppUser entry for the username
+                new_user = database.AppUser(username=username)
+                session.add(new_user)
+                session.commit()
+                return new_user.id
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def addEvent(user_id, title, start_time, end_time, all_day):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             app_event = database.AppEvent(
+                user_id=user_id,
                 title=title,
                 start_time=start_time,
                 end_time=end_time,
@@ -41,13 +62,13 @@ def addEvent(title, start_time, end_time, all_day):
 # -----------------------------------------------------------------------
 
 
-def getEvents():
+def getEvents(user_id):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             # Query all AppEvent objects from the database
-            app_events = session.query(database.AppEvent).all()
+            app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
 
             # Convert each AppEvent object into a dictionary
             event_dicts = []
