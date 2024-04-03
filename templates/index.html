@@ -4,7 +4,7 @@
 <head>
   <meta charset='utf-8' />
   <script src='static/fullcalendar/dist/index.global.js'></script>
-  <script src-'static/app.js'></script>
+  <script src='static/app.js'></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <link href='static/style.css' rel='stylesheet' />
   <script>
@@ -105,12 +105,97 @@
       });
     });
 
+    // Define getRandomColor function
+    function getRandomColor() {
+      var minBrightness = 128; // Minimum brightness threshold
+
+      // Generate random values for red, green, and blue components
+      var r = Math.floor(Math.random() * 256);
+      var g = Math.floor(Math.random() * 256);
+      var b = Math.floor(Math.random() * 256);
+
+      // Calculate the brightness of the color using the YIQ formula
+      var brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+      // If the brightness is below the threshold, adjust the color
+      if (brightness < minBrightness) {
+        // Increase brightness by adding a fixed value to each component
+        var brightnessDifference = minBrightness - brightness;
+        var adjustmentFactor = brightnessDifference / brightness;
+        r = Math.min(255, Math.floor(r + adjustmentFactor * r));
+        g = Math.min(255, Math.floor(g + adjustmentFactor * g));
+        b = Math.min(255, Math.floor(b + adjustmentFactor * b));
+      }
+
+      // Convert RGB components to hexadecimal string representation
+      var hexColor = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+
+      return hexColor;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+    var phrases = [
+        "You got this",
+        "You're awesome",
+        "Believe in yourself",
+        "Stay positive",
+        "Keep going",
+        "Dream big",
+        "Make it happen",
+        "You're amazing",
+        "You can do it",
+        "Never give up",
+        "Almost Friday",
+        "Work hard play hard",
+        "Grades are a social construct",
+        "We out here",
+        "So back",
+        "Academic weapon",
+        "Just rip it",
+        "F it we ball",
+        "Here we go",
+        "You're so up right now"
+    ];
+
+    var index = 0;
+    var dynamicText = document.getElementById("dynamicText");
+
+    function updateText() {
+      var phrase = phrases[index];
+      var words = phrase.split(' '); // Split the phrase into words
+
+      dynamicText.textContent = ''; // Clear the text content initially
+
+    // Apply the random color to the text element
+    dynamicText.style.color = getRandomColor();
+
+      // Display each word sequentially with a delay
+      words.forEach(function(word, wordIndex) {
+          setTimeout(function() {
+              dynamicText.textContent += word + ' '; // Append the word with a space
+              // If it's the last word, append a newline character
+              if (wordIndex === words.length - 1) {
+                  dynamicText.textContent += '\n';
+              }
+          }, wordIndex * 500); // Delay each word by 500 milliseconds
+      });
+
+      index = (index + 1) % phrases.length;
+    }
+
+    // Initial text update
+    updateText();
+
+    // Update text every 3 seconds
+    setInterval(updateText, 3000);
+    });
+
   </script>
 </head>
 
 <body>
   <div id='calendar'></div>
-  <div class="sidebar">
+  <div class="sidebarleft">
     <h2>Add Task</h2>
     <h2> Hello {{username}} </h2>
     <label for="taskName">Task Name:</label>
@@ -120,6 +205,9 @@
     <input type="number" id="duration" name="duration" placeholder="Enter duration">
 
     <button onclick="addTask()">Add Task</button>
+  </div>
+  <div class="sidebarright">
+    <h2 id="dynamicText"> Loading...</h2>
   </div>
 </body>
 </html>

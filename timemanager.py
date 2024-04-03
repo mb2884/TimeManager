@@ -77,7 +77,10 @@ def get_events():
     return flask.jsonify(database.getEvents(user_id))
 
 
-@app.route('/', methods=['GET'])
+@app.route('/')
+def landing():
+    return flask.render_template('landing.html')
+
 @app.route('/index', methods=['GET'])
 def index():
     username = auth.authenticate()
