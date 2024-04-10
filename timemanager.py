@@ -7,9 +7,10 @@
 
 import os
 import flask
-from flask import request, jsonify
+from flask import request, jsonify, redirect
 import dbfuncs as database
 import auth
+import urllib.parse
 
 # -----------------------------------------------------------------------
 
@@ -34,6 +35,14 @@ def logoutapp():
 @app.route('/logoutcas', methods=['GET'])
 def logoutcas():
     return auth.logoutcas()
+
+#@app.route('/logout')
+#def logout():
+##   logout_url = 'https://fed.princeton.edu/cas/logout'
+#    service_url = urllib.parse.quote(request.url_root + 'logout')
+#    redirect_url = logout_url + '?service=' + service_url
+#    return redirect(redirect_url)
+
 
 # -----------------------------------------------------------------------
 
@@ -78,6 +87,7 @@ def get_events():
 
 
 @app.route('/')
+@app.route('/landing')
 def landing():
     return flask.render_template('landing.html')
 
@@ -89,3 +99,6 @@ def index():
     return response
 
 # -----------------------------------------------------------------------
+
+if __name__ == '__main__':
+    app.run(debug=True)

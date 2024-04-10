@@ -1,19 +1,10 @@
-#!/usr/bin/env python
-
-#-----------------------------------------------------------------------
-# auth.py
-# Based on auth.py by Alex Halderman, Scott Karlin, Brian Kernighan,
-# and Bob Dondero
-# Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
-#-----------------------------------------------------------------------
-
 import urllib.request
 import urllib.parse
 import re
-import flask 
+import flask
+import ssl  # Import the ssl module
 
-#-----------------------------------------------------------------------
-
+# CAS URL
 _CAS_URL = 'https://fed.princeton.edu/cas/'
 
 #-----------------------------------------------------------------------
@@ -88,7 +79,7 @@ def logoutapp():
 
     # Log out of the application.
     flask.session.clear()
-    html_code = flask.render_template('loggedout.html')
+    html_code = flask.render_template('landing.html')
     response = flask.make_response(html_code)
     return response
 
@@ -96,8 +87,11 @@ def logoutapp():
 
 def logoutcas():
 
+    print("I was clicked")
+
     # Log out of the CAS session, and then the application.
     logout_url = (_CAS_URL + 'logout?service='
         + urllib.parse.quote(
             re.sub('logoutcas', 'logoutapp', flask.request.url)))
+    print(logout_url)
     flask.abort(flask.redirect(logout_url))
