@@ -6,7 +6,7 @@
   <script src='static/fullcalendar/dist/index.global.js'></script>
   <script src='static/app.js'></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  
+
   <link href='static/style.css' rel='stylesheet' />
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -25,7 +25,7 @@
         selectMirror: true,
         eventClick: function (arg) {
           if (confirm('Are you sure you want to delete this event?')) {
-            
+
             // Send an AJAX request to delete the event from the database
             console.log(arg);
             console.log(arg.event);
@@ -73,7 +73,7 @@
                     id: response.id
                   });
                 }
-                
+
               },
               error: function (xhr, status, error) {
                 alert('There was an error processing your request. Please try again.');
@@ -101,38 +101,36 @@
           // Handle errors and provide feedback to the user
         }
       });
-    });
 
-    // Define getRandomColor function
-    function getRandomColor() {
-      var minBrightness = 128; // Minimum brightness threshold
+      // Define getRandomColor function
+      function getRandomColor() {
+        var minBrightness = 128; // Minimum brightness threshold
 
-      // Generate random values for red, green, and blue components
-      var r = Math.floor(Math.random() * 256);
-      var g = Math.floor(Math.random() * 256);
-      var b = Math.floor(Math.random() * 256);
+        // Generate random values for red, green, and blue components
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
 
-      // Calculate the brightness of the color using the YIQ formula
-      var brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // Calculate the brightness of the color using the YIQ formula
+        var brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-      // If the brightness is below the threshold, adjust the color
-      if (brightness < minBrightness) {
-        // Increase brightness by adding a fixed value to each component
-        var brightnessDifference = minBrightness - brightness;
-        var adjustmentFactor = brightnessDifference / brightness;
-        r = Math.min(255, Math.floor(r + adjustmentFactor * r));
-        g = Math.min(255, Math.floor(g + adjustmentFactor * g));
-        b = Math.min(255, Math.floor(b + adjustmentFactor * b));
+        // If the brightness is below the threshold, adjust the color
+        if (brightness < minBrightness) {
+          // Increase brightness by adding a fixed value to each component
+          var brightnessDifference = minBrightness - brightness;
+          var adjustmentFactor = brightnessDifference / brightness;
+          r = Math.min(255, Math.floor(r + adjustmentFactor * r));
+          g = Math.min(255, Math.floor(g + adjustmentFactor * g));
+          b = Math.min(255, Math.floor(b + adjustmentFactor * b));
+        }
+
+        // Convert RGB components to hexadecimal string representation
+        var hexColor = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+
+        return hexColor;
       }
 
-      // Convert RGB components to hexadecimal string representation
-      var hexColor = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-
-      return hexColor;
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-    var phrases = [
+      var phrases = [
         "You got this",
         "You're awesome",
         "Believe in yourself",
@@ -155,57 +153,120 @@
         "You're so up right now",
         "Keep going!",
         "Don't forget to rest!"
-    ];
+      ];
 
-    var index = 0;
-    var dynamicText = document.getElementById("dynamicText");
+      var index = 0;
+      var dynamicText = document.getElementById("dynamicText");
 
-    function updateText() {
-      var phrase = phrases[index];
-      var words = phrase.split(' '); // Split the phrase into words
+      function updateText() {
+        var phrase = phrases[index];
+        var words = phrase.split(' '); // Split the phrase into words
 
-      dynamicText.textContent = ''; // Clear the text content initially
+        dynamicText.textContent = ''; // Clear the text content initially
 
-      // Apply the random color to the text element
-      dynamicText.style.color = getRandomColor();
+        // Apply the random color to the text element
+        dynamicText.style.color = getRandomColor();
 
-      // Display each word sequentially with a delay
-      words.forEach(function(word, wordIndex) {
-          setTimeout(function() {
-              dynamicText.textContent += word + ' '; // Append the word with a space
-              // If it's the last word, append a newline character
-              if (wordIndex === words.length - 1) {
-                  dynamicText.textContent += '\n';
-              }
+        // Display each word sequentially with a delay
+        words.forEach(function (word, wordIndex) {
+          setTimeout(function () {
+            dynamicText.textContent += word + ' '; // Append the word with a space
+            // If it's the last word, append a newline character
+            if (wordIndex === words.length - 1) {
+              dynamicText.textContent += '\n';
+            }
           }, wordIndex * 500); // Delay each word by 500 milliseconds
-      });
+        });
 
-      index = (index + 1) % phrases.length;
-    }
+        index = (index + 1) % phrases.length;
+      }
 
-    // Initial text update
-    updateText();
+      // Initial text update
+      updateText();
 
-    // Update text every 3 seconds
-    setInterval(updateText, 3000);
-    });
+      // Update text every 3 seconds
+      setInterval(updateText, 3000);
 
-    function logout() {
-      // Call the logout route when the button is clicked
-      $.ajax({
-        type: 'GET',
-        url: '/logoutapp',
-        success: function (response) {
-          console.log(response); // success message
-          window.location.href = '/landing'; // Redirect to the landing page
-        },
-        error: function (xhr, status, error) {
-          console.error(error); // Log error message
+      function logout() {
+        // Call the logout route when the button is clicked
+        $.ajax({
+          type: 'GET',
+          url: '/logoutapp',
+          success: function (response) {
+            console.log(response); // success message
+            window.location.href = '/landing'; // Redirect to the landing page
+          },
+          error: function (xhr, status, error) {
+            console.error(error); // Log error message
+          }
+        });
+
+      }
+
+      // Function to handle adding tasks from the sidebar
+      function addTask() {
+        // Get input values from the sidebar fields
+        var title = document.getElementById('taskName').value;
+        var duration = parseInt(document.getElementById('duration').value);
+        var dueDate = new Date(document.getElementById('dueDate').value);
+        var dueTime = new Date(document.getElementById('dueTime').value);
+
+        // Calculate total duration in milliseconds
+        var totalDurationMillis = duration * 60 * 60 * 1000;
+
+        // Initialize start date as the current date
+        var startDate = new Date();
+
+        // Set the time of the start date to match the due time
+        startDate.setHours(dueTime.getHours());
+        startDate.setMinutes(dueTime.getMinutes());
+
+        // Create the end date as the due date
+        var endDate = new Date(dueDate);
+
+        // Array to hold events
+        var events = [];
+
+        // Loop through each hour between start and end date
+        while (startDate < endDate && totalDurationMillis > 0) {
+          // Calculate end time for the current chunk
+          var chunkEndTime = new Date(startDate.getTime() + Math.min(60 * 60 * 1000, totalDurationMillis));
+
+          // Create the event object for the current chunk
+          var event = {
+            title: title,
+            start: new Date(startDate), // Clone the date object to prevent reference issues
+            end: new Date(chunkEndTime), // Clone the date object to prevent reference issues
+            allDay: false // Assuming the event is not an all-day event
+          };
+
+          // Add the event to the events array
+          events.push(event);
+
+          // Move start date to the next hour
+          startDate.setHours(startDate.getHours() + 1);
+
+          // Deduct an hour from total duration
+          totalDurationMillis -= 60 * 60 * 1000;
         }
-      });
 
-    }
+  // Add all events to the calendar
+  calendar.addEventSource(events);
 
+  // Clear input fields after adding the task
+  document.getElementById('taskName').value = '';
+  document.getElementById('duration').value = '';
+  document.getElementById('dueDate').value = '';
+  document.getElementById('dueTime').value = '';
+
+  // Optionally, provide feedback to the user that the task has been added
+  alert('Task added successfully!');
+}
+
+      // Event listener for the "Add Task" button click
+      document.getElementById('addTaskButton').addEventListener('click', addTask);
+
+    });
   </script>
 </head>
 
@@ -222,14 +283,15 @@
     <br>
 
     <label for="dueDate">When Due:</label>
-    <input class="input" type="date" id="dueDate" name="dueDate"> 
+    <input class="input" type="date" id="dueDate" name="dueDate">
     <input class="input" type="time" id="dueTime" name="dueTime">
 
-    <button onclick="addTask()">Add Task</button>
+    <button id="addTaskButton">Add Task</button> <!-- Added an id to the button -->
   </div>
   <div class="sidebarright">
     <h2 id="dynamicText"> Loading...</h2>
   </div>
   <button onclick="logout()" id="logoutButton" style="position: absolute; top: 10px; right: 10px;">Logout</button>
 </body>
+
 </html>
