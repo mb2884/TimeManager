@@ -60,6 +60,18 @@ def add_event():
     event_id = database.addEvent(user_id, title, start, end, all_day)
     return jsonify({'id': event_id})
 
+@app.route('/add-task', methods=['POST'])
+def add_task():
+    data = request.get_json()
+    username = data.get('username')
+    title = data.get('title')
+    start = data.get('start')
+    end = data.get('end')
+    length = data.get('length')
+    user_id = database.get_user_id(username)
+
+    task_id = database.addTask(user_id, title, start, end, length)
+    return jsonify({'id': task_id})
 
 @app.route('/delete-event', methods=['POST'])
 def delete_event():
@@ -77,6 +89,21 @@ def delete_event():
         # If an error occurs, return an error message
         return jsonify({'error': str(ex)}), 500
 
+@app.route('/delete-task', methods=['POST'])
+def delete_task():
+    try:
+        # Get the event ID from the request
+        data = request.get_json()
+        task_id = data.get('task_id')
+
+        # Implement the logic to delete the event from the database
+        database.delete_task(task_id)
+
+        # Return a success message to the client
+        return jsonify({'message': 'Task deleted successfully'})
+    except Exception as ex:
+        # If an error occurs, return an error message
+        return jsonify({'error': str(ex)}), 500
 
 @app.route('/get-events', methods=['GET'])
 def get_events():
@@ -85,6 +112,14 @@ def get_events():
     
     return flask.jsonify(database.getEvents(user_id))
 
+@app.route('/get-tasks', methods=['GET'])
+def get_tasks():
+    username = auth.authenticate()
+    user_id = database.get_user_id(username)
+    
+    return flask.jsonify(database.getTasks(user_id))
+
+# ----------------------------------------------------------------------
 
 @app.route('/')
 @app.route('/landing')

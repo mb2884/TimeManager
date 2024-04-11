@@ -41,3 +41,6 @@ class AppTask(Base):
     start_time = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     due_date = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     est_length = sqlalchemy.Column(sqlalchemy.REAL)
+
+
+

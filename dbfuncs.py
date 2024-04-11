@@ -39,6 +39,8 @@ def get_user_id(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+# -----------------------------------------------------------------------
+
 def addEvent(user_id, title, start_time, end_time, all_day):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -61,6 +63,27 @@ def addEvent(user_id, title, start_time, end_time, all_day):
 
 # -----------------------------------------------------------------------
 
+def addTask(user_id, title, start_time, due_date, est_length):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            app_task = database.AppTask(
+                user_id=user_id,
+                title=title,
+                start_time=start_time,
+                end_time=due_date,
+                est_length = est_length
+            )
+            session.add(app_task)
+            session.commit()
+            return app_task.id
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# -----------------------------------------------------------------------
 
 def getEvents(user_id):
     try:
@@ -90,6 +113,34 @@ def getEvents(user_id):
 
 # -----------------------------------------------------------------------
 
+def getTasks(user_id):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Query all AppEvent objects from the database
+            app_tasks = session.query(database.AppTask).filter_by(user_id=user_id).all()
+
+            # Convert each AppEvent object into a dictionary
+            task_dicts = []
+            for task in app_tasks:
+                task_dict = {
+                    'title': task.title,
+                    'start': task.start_time.isoformat(),  # Convert datetime to ISO format
+                    'end': task.due_date.isoformat(),  # Convert datetime to ISO format
+                    'length': task.est_length,
+                    'id': task.id
+                }
+                task_dicts.append(task_dict)
+
+        return task_dicts
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# -----------------------------------------------------------------------
+
 
 def delete_event(event_id):
     print(f"Deleting event with ID {event_id}...")
@@ -108,6 +159,29 @@ def delete_event(event_id):
                 print(f"Event with ID {event_id} deleted successfully.")
             else:
                 print(f"Event with ID {event_id} not found.")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# -----------------------------------------------------------------------
+
+def delete_task(task_id):
+    print(f"Deleting task with ID {task_id}...")
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Retrieve the event to be deleted
+            task_to_delete = session.query(
+                database.AppTask).filter_by(id=task_id).first()
+
+            if task_to_delete:
+                # Delete the event
+                session.delete(task_to_delete)
+                session.commit()
+                print(f"Task with ID {task_id} deleted successfully.")
+            else:
+                print(f"Task with ID {task_id} not found.")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
