@@ -72,7 +72,7 @@ def addTask(user_id, title, start_time, due_date, est_length):
                 user_id=user_id,
                 title=title,
                 start_time=start_time,
-                end_time=due_date,
+                due_date=due_date,
                 est_length = est_length
             )
             session.add(app_task)
