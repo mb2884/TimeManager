@@ -108,11 +108,11 @@ def delete_event():
         # If an error occurs, return an error message
         return jsonify({'error': str(ex)}), 500
 
-@app.route('/delete-task', methods=['GET'])
+@app.route('/delete-task', methods=['POST'])
 def delete_task():
     try:
-        # Get the event ID from the request
-        task_id = request.args.get('id')
+        data = request.get_json()
+        task_id = data.get('task_id')
         print("reported task_id: ", task_id)
 
         # Implement the logic to delete the event from the database

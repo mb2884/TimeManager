@@ -3,13 +3,15 @@
 
 <head>
   <meta charset='utf-8' />
+  <title>Time Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src='static/fullcalendar/dist/index.global.js'></script>
   <script src='static/app.js'></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  
+
   <link href='static/style.css' rel='stylesheet' />
   <script>
-    
+
     document.addEventListener('DOMContentLoaded', function () {
       var calendarEl = document.getElementById('calendar');
 
@@ -35,6 +37,7 @@
               success: function (response) {
                 console.log(response); // Log success message
                 arg.event.remove(); // Remove the event from the calendar UI
+                refreshCalendar(); // Refresh the calendar after deleting the event
               },
               error: function (xhr, status, error) {
                 console.error(error); // Log error message
@@ -68,8 +71,9 @@
                     allDay: arg.allDay,
                     id: response.id
                   });
+                  refreshCalendar(); // Refresh the calendar after adding the event
                 }
-                
+
               },
               error: function (xhr, status, error) {
                 alert('There was an error processing your request. Please try again.');
@@ -79,6 +83,46 @@
             $.ajax(requestData);
           }
           calendar.unselect();
+        },
+        eventDrop: function (arg) {
+          // When an event is dropped/moved, send an AJAX request to update the event on the server
+          $.ajax({
+            type: 'POST',
+            url: '/update-event',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              event_id: arg.event._def.publicId,
+              start: arg.event.start.toISOString(),
+              end: arg.event.end ? arg.event.end.toISOString() : null // Check if the event has an end time
+            }),
+            success: function (response) {
+              console.log(response); // Log success message
+            },
+            error: function (xhr, status, error) {
+              console.error(error); // Log error message
+              // Handle errors and provide feedback to the user
+            }
+          });
+        },
+        eventResize: function (arg) {
+          // When an event is resized, send an AJAX request to update the event duration on the server
+          $.ajax({
+            type: 'POST',
+            url: '/update-event',
+            contentType: 'application/json',
+            data: JSON.stringify({
+              event_id: arg.event._def.publicId,
+              start: arg.event.start.toISOString(),
+              end: arg.event.end ? arg.event.end.toISOString() : null // Check if the event has an end time
+            }),
+            success: function (response) {
+              console.log(response); // Log success message
+            },
+            error: function (xhr, status, error) {
+              console.error(error); // Log error message
+              // Handle errors and provide feedback to the user
+            }
+          });
         }
       });
 
@@ -99,43 +143,34 @@
       });
       // Event listener for the "Add Task" button click
       document.getElementById('addTaskButton').addEventListener('click', addTask);
-    });
 
-    $.ajax({
-      type: 'GET',
-      url: '/get-tasks',
-      success: function (response) {
-        // Add tasks to the list
-        response.forEach(function (task) {
-          console.log(task);
-          $('#taskList').append('<li>' + task.title + '<a href="#" class="delete-task" data-id="' + task.id + '">❌</a></li>');
+      // Refresh the calendar every 5 seconds
+      setInterval(refreshCalendar, 5000);
+
+      // Define refreshCalendar function
+      function refreshCalendar() {
+        // Get events from the server
+        $.ajax({
+          type: 'GET',
+          url: '/get-events',
+          success: function (events) {
+            // Clear the calendar
+            calendar.removeAllEvents();
+            // Add events to the calendar
+            calendar.addEventSource(events);
+            calendar.render();
+          },
+          error: function (xhr, status, error) {
+            console.error(error);
+            // Handle errors and provide feedback to the user
+          }
         });
-        
-        // Attach click event handler for delete task links
-        $('#taskList').on('click', 'a.delete-task', function(event) {
-          event.preventDefault();
-          var taskId = $(this).data('id'); // Use the data-id attribute of the clicked element
-          console.log(taskId);
-          $.ajax({
-            type: 'GET',
-            url: '/delete-task?id=' + taskId,
-            success: function(response) {
-              // Remove the task from the list if deletion is successful
-              $(event.target).closest('li').remove();
-              console.log(response.message); // Display success message
-            },
-            error: function(xhr, status, error) {
-              console.log(xhr.responseText); // Display error message
-            }
-          });
-        });
-      },
-      error: function (xhr, status, error) {
-        console.error(error);
-        // Handle errors and provide feedback to the user
       }
     });
-    
+
+
+
+
 
     function addTask() {
       let title = $('#taskName').val();
@@ -154,57 +189,57 @@
         url: '/add-task',
         contentType: 'application/json',
         data: JSON.stringify({
-            username: '{{username}}',
-            title: title,
-            start: startDateTime,
-            end: endDateTime,
-            length: duration  // Include task-specific field
+          username: '{{username}}',
+          title: title,
+          start: startDateTime,
+          end: endDateTime,
+          length: duration  // Include task-specific field
         }),
         success: function (response) {
-            // Handle success response if needed
-            console.log('Task added successfully:', response);
-            // Refresh the calendar or any other action you need
-            // Get events from the server
-            $.ajax({
-                type: 'GET',
-                url: '/get-events',
-                success: function (events) {
-                    // Clear the task list
-                    $('#taskList').empty();
-                    // Add events to the calendar
-                    calendar.addEventSource(events);
-                    calendar.render();
-                    // Add tasks to the task list
-                    events.forEach(function(event) {
-                      console.log(event);
-                        $('#taskList').append('<li>' + event.title + '<a href="#" class="delete-task" data-id="' + event.id + '">❌</a></li>');
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    // Handle errors and provide feedback to the user
-                }
-            });
+          // Handle success response if needed
+          console.log('Task added successfully:', response);
+          // Refresh the calendar or any other action you need
+          // Update the task list with the newly added task
+          $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
         },
-        
         error: function (xhr, status, error) {
-            // Handle error response if needed
-            console.error('Error adding task:', error);
+          // Handle error response if needed
+          console.error('Error adding task:', error);
         }
-    });
-
-
-      
+      });
 
       // Clear the input fields
-      // $('#taskName').val('');
-      // $('#duration').val('');
-      // $('#startDate').val('');
-      // $('#startTime').val('');
-      // $('#dueDate').val('');
-      // $('#dueTime').val('');
-    
+      $('#taskName').val('');
+      $('#duration').val('');
+      $('#startDate').val('');
+      $('#startTime').val('');
+      $('#dueDate').val('');
+      $('#dueTime').val('');
     }
+
+    $(document).on('click', '.delete-task', function () {
+      var taskId = $(this).data('id');
+      console.log('Deleting task with ID:', taskId);
+      var listItem = $(this).closest('li'); // Get the parent <li> element
+
+      // Send an AJAX request to delete the task from the server
+      $.ajax({
+        type: 'POST',
+        url: '/delete-task',
+        contentType: 'application/json',
+        data: JSON.stringify({ task_id: taskId }), // Pass the task ID to the server
+        success: function (response) {
+          console.log(response); // Log success message
+          // Remove the task from the task list
+          listItem.remove(); // Remove the parent <li> element
+        },
+        error: function (xhr, status, error) {
+          console.error(error); // Log error message
+          // Handle errors and provide feedback to the user
+        }
+      });
+    });
+
 
     // Define getRandomColor function
     function getRandomColor() {
@@ -234,8 +269,8 @@
       return hexColor;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-    var phrases = [
+    document.addEventListener("DOMContentLoaded", function () {
+      var phrases = [
         "You got this",
         "You're awesome",
         "Believe in yourself",
@@ -258,72 +293,40 @@
         "You're so up right now",
         "Keep going!",
         "Don't forget to rest!"
-    ];
+      ];
 
-    var index = 0;
-    var dynamicText = document.getElementById("dynamicText");
+      var index = 0;
+      var dynamicText = document.getElementById("dynamicText");
 
-    function updateText() {
-      var phrase = phrases[index];
-      var words = phrase.split(' '); // Split the phrase into words
+      function updateText() {
+        var phrase = phrases[index];
+        var words = phrase.split(' '); // Split the phrase into words
 
-      dynamicText.textContent = ''; // Clear the text content initially
+        dynamicText.textContent = ''; // Clear the text content initially
 
-      // Apply the random color to the text element
-      dynamicText.style.color = getRandomColor();
+        // Apply the random color to the text element
+        dynamicText.style.color = getRandomColor();
 
-      // Display each word sequentially with a delay
-      words.forEach(function(word, wordIndex) {
-          setTimeout(function() {
-              dynamicText.textContent += word + ' '; // Append the word with a space
-              // If it's the last word, append a newline character
-              if (wordIndex === words.length - 1) {
-                  dynamicText.textContent += '\n';
-              }
-          }, wordIndex * 500); // Delay each word by 500 milliseconds
-      });
-
-      index = (index + 1) % phrases.length;
-    }
-
-    // Initial text update
-    updateText();
-
-    // Update text every 3 seconds
-    setInterval(updateText, 3000);
-    });
-
-    document.getElementById('saveButton').addEventListener('click', function() {
-    saveEvents();
-    saveTasks();
-});
-
-function saveEvents() {
-    // Get all events from the FullCalendar instance
-    var events = calendar.getEvents();
-
-    // Send AJAX request to save each event to the server
-    events.forEach(function(event) {
-        $.ajax({
-            type: 'POST',
-            url: '/add-event',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                username: '{{username}}',
-                title: event.title,
-                start: event.start.toISOString(),
-                end: event.end.toISOString(),
-                allDay: event.allDay
-            }),
-            success: function(response) {
-                console.log('Event saved successfully:', response);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error saving event:', error);
+        // Display each word sequentially with a delay
+        words.forEach(function (word, wordIndex) {
+          setTimeout(function () {
+            dynamicText.textContent += word + ' '; // Append the word with a space
+            // If it's the last word, append a newline character
+            if (wordIndex === words.length - 1) {
+              dynamicText.textContent += '\n';
             }
+          }, wordIndex * 500); // Delay each word by 500 milliseconds
         });
+
+        index = (index + 1) % phrases.length;
+      }
+
+      // Initial text update
+      updateText();
+
+      // Update text every 3 seconds
+      setInterval(updateText, 3000);
     });
-}
 
     function logout() {
       // Call the logout route when the button is clicked
@@ -341,12 +344,13 @@ function saveEvents() {
 
     }
 
+
   </script>
 </head>
 
 <body>
   <div id='calendar'></div>
-  
+
   <div class="sidebarleft">
     <h2>Add Task</h2>
     <h2> Hello {{username}} </h2>
@@ -358,22 +362,23 @@ function saveEvents() {
     <br>
 
     <label for="startDate">When to start:</label>
-    <input class="input" type="date" id="startDate" name="startDate"> 
+    <input class="input" type="date" id="startDate" name="startDate">
     <input class="input" type="time" id="startTime" name="startTime">
     <br>
-    
+
     <label for="dueDate">When Due:</label>
-    <input class="input" type="date" id="dueDate" name="dueDate"> 
+    <input class="input" type="date" id="dueDate" name="dueDate">
     <input class="input" type="time" id="dueTime" name="dueTime">
 
     <button id="addTaskButton">Add Task</button> <!-- Removed onclick attribute -->
 
     <h2>Tasks</h2>
     <ul id="taskList"></ul>
-</div>
+  </div>
   <div class="sidebarright">
     <h2 id="dynamicText"> Loading...</h2>
   </div>
   <button onclick="logout()" id="logoutButton" style="position: absolute; top: 10px; right: 10px;">Logout</button>
 </body>
+
 </html>
