@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # dbfuncs.py
 # Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 # import os
 import sys
@@ -16,7 +16,7 @@ import database
 # DATABASE_URL = os.getenv['DATABASE_URL']
 DATABASE_URL = 'postgresql://timemanager_c52x_user:XYwubY5k8RCdkL19NysChiHfsVgeMSCh@dpg-co0rh6a0si5c73fjt8cg-a.ohio-postgres.render.com/timemanager_c52x'
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def get_user_id(username):
     try:
@@ -39,7 +39,7 @@ def get_user_id(username):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None):
     try:
@@ -62,7 +62,7 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None)
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def addTask(user_id, title, start_time, due_date, est_length):
     try:
@@ -84,7 +84,7 @@ def addTask(user_id, title, start_time, due_date, est_length):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def getEvents(user_id, filter_by_date=None):
     try:
@@ -144,38 +144,8 @@ def getTasks(user_id):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
 
-def updateEvents(user_id):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-
-            if filter_by_date:
-                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).filter(database.AppEvent.start_time >= filter_by_date[0]).filter(database.AppEvent.end_time <= filter_by_date[1]).order_by(database.AppEvent.start_time).all()
-            else:
-                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
-
-            # Convert each AppEvent object into a dictionary
-            event_dicts = []
-            for event in app_events:
-                event_dict = {
-                    'title': event.title,
-                    'start': event.start_time.isoformat(),  # Convert datetime to ISO format
-                    'end': event.end_time.isoformat(),  # Convert datetime to ISO format
-                    'allDay': event.all_day,
-                    'id': event.id,
-                    'parentTaskID': event.parent_task_id
-                }
-                event_dicts.append(event_dict)
-
-        return event_dicts
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
-#----------------------------
+#-----------------------------------------------------------------------
 
 
 def delete_event(event_id):
@@ -199,7 +169,7 @@ def delete_event(event_id):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def delete_task(task_id):
     print(f"Deleting task with ID {task_id}...")
@@ -218,6 +188,29 @@ def delete_task(task_id):
                 print(f"Task with ID {task_id} deleted successfully.")
             else:
                 print(f"Task with ID {task_id} not found.")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+def update_event(event_id, title, start, end, all_day):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Retrieve the event to be updated
+            event_to_update = session.query(
+                database.AppEvent).filter_by(id=event_id).first()
+
+            if event_to_update:
+                # Update the event
+                event_to_update.title = title
+                event_to_update.start_time = start
+                event_to_update.end_time = end
+                event_to_update.all_day = all_day
+                session.commit()
+                print(f"Event with ID {event_id} updated successfully.")
+            else:
+                print(f"Event with ID {event_id} not found.")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)

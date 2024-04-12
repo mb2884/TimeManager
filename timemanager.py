@@ -76,7 +76,7 @@ def add_task():
     return jsonify({'id': task_id})
 
 @app.route('/update-event', methods=['POST'])
-def update_event(evemt):
+def update_event():
     try:
         data = request.get_json()
         event_id = data.get('event_id')

@@ -94,7 +94,9 @@
             data: JSON.stringify({
               event_id: arg.event._def.publicId,
               start: arg.event.start.toISOString(),
-              end: arg.event.end ? arg.event.end.toISOString() : null // Check if the event has an end time
+              end: arg.event.end ? arg.event.end.toISOString() : null, // Check if the event has an end time
+              allDay: arg.event.allDay,
+              title: arg.event.title
             }),
             success: function (response) {
               console.log(response); // Log success message
@@ -114,7 +116,9 @@
             data: JSON.stringify({
               event_id: arg.event._def.publicId,
               start: arg.event.start.toISOString(),
-              end: arg.event.end ? arg.event.end.toISOString() : null // Check if the event has an end time
+              end: arg.event.end ? arg.event.end.toISOString() : null, // Check if the event has an end time
+              allDay: arg.event.allDay,
+              title: arg.event.title
             }),
             success: function (response) {
               console.log(response); // Log success message
