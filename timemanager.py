@@ -8,8 +8,8 @@
 import os
 import flask
 from flask import request, jsonify
-import flask_wtf.csrf
-import flask_talisman
+# import flask_wtf.csrf
+# import flask_talisman
 import dbfuncs as database
 import auth
 import tasksplitter
