@@ -146,24 +146,119 @@
           // Handle errors and provide feedback to the user
         }
       });
-      // Event listener for the "Add Task" button click
-      document.getElementById('addTaskButton').addEventListener('click', addTask);
 
-      // Refresh the calendar every 5 seconds
-      setInterval(refreshCalendar, 5000);
+      // Function to validate all task fields
+      function validateTaskFields() {
+        var title = $('#taskName').val();
+        var duration = parseInt($('#duration').val());
+        var startDate = $('#startDate').val();
+        var startTime = $('#startTime').val();
+        var dueDate = $('#dueDate').val();
+        var dueTime = $('#dueTime').val();
 
-      // Define refreshCalendar function
-      function refreshCalendar() {
-        // Get events from the server
+
+        if (isNaN(duration) || duration <= 0) {
+          $('#durationError').text('Duration must be a positive number.');
+          return false;
+        }
+
+        // Check if any field is empty
+        if (title.trim() === '' || isNaN(duration) || duration <= 0 || startDate === '' || startTime === '' || dueDate === '' || dueTime === '') {
+          $('#durationError').text('Please fill out all fields.');
+          return false;
+        }
+
+        // Check if due date is after start date
+        var startDateTime = new Date(startDate + ' ' + startTime);
+        var endDateTime = new Date(dueDate + ' ' + dueTime);
+        if (endDateTime <= startDateTime) {
+          $('#durationError').text('Due date must be after start date.');
+          return false;
+        }
+
+        $('#durationError').text('');
+        return true;
+      }
+
+      // Function to add task
+      function addTask() {
+        // Validate all task fields
+        if (!validateTaskFields()) {
+          return; // Exit if validation fails
+        }
+
+        let title = $('#taskName').val();
+        let duration = Math.round(parseFloat($('#duration').val()));
+        let startDate = $('#startDate').val();
+        let startTime = $('#startTime').val();
+        let dueDate = $('#dueDate').val();
+        let dueTime = $('#dueTime').val();
+
+        let startDateTime = new Date(startDate + ' ' + startTime); // Combine start date and time
+        let endDateTime = new Date(dueDate + ' ' + dueTime); // Combine due date and time
+
+        // Send task details to the server
+        $.ajax({
+          type: 'POST',
+          url: '/add-task',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            username: '{{username}}',
+            title: title,
+            start: startDateTime,
+            end: endDateTime,
+            length: duration // Include task-specific field
+          }),
+          success: function (response) {
+            // Handle success response if needed
+            console.log('Task added successfully:', response);
+            // Refresh the calendar or any other action you need
+            // Update the task list with the newly added task
+            $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
+          },
+          error: function (xhr, status, error) {
+            // Handle error response if needed
+            console.error('Error adding task:', error);
+          }
+        });
+
+        // Clear the input fields
+        //$('#taskName').val('');
+        //$('#duration').val('');
+        //$('#startDate').val('');
+        //$('#startTime').val('');
+        //$('#dueDate').val('');
+        //$('#dueTime').val('');
+      }
+
+      // Event listener for add task button click
+      $('#addTaskButton').click(function () {
+        // Validate all fields before adding task
+        if (validateTaskFields()) {
+          addTask();
+          // After adding the task, fetch and display tasks again
+          fetchAndDisplayTasks();
+        }
+      });
+
+      // Function to fetch tasks from the server and display them in the task list
+      function fetchAndDisplayTasks() {
+        // Fetch tasks from the server
         $.ajax({
           type: 'GET',
-          url: '/get-events',
-          success: function (events) {
-            // Clear the calendar
-            calendar.removeAllEvents();
-            // Add events to the calendar
-            calendar.addEventSource(events);
-            calendar.render();
+          url: '/get-tasks',
+          success: function (tasks) {
+            // Clear the task list
+            $('#taskList').empty();
+
+            // Iterate over each task and create a list item for it
+            tasks.forEach(function (task) {
+              // Create list item HTML
+              var listItemHtml = '<li>' + task.title + '<a href="#" class="delete-task" data-id="' + task.id + '">❌</a></li>';
+
+              // Append the list item to the task list
+              $('#taskList').append(listItemHtml);
+            });
           },
           error: function (xhr, status, error) {
             console.error(error);
@@ -171,56 +266,11 @@
           }
         });
       }
+          // On page load, fetch and display tasks
+    fetchAndDisplayTasks();
     });
 
 
-
-
-
-    function addTask() {
-      let title = $('#taskName').val();
-      let duration = Math.round(parseFloat($('#duration').val()));
-      let startDate = $('#startDate').val();
-      let startTime = $('#startTime').val();
-      let dueDate = $('#dueDate').val();
-      let dueTime = $('#dueTime').val();
-
-      let startDateTime = new Date(startDate + ' ' + startTime); // Combine start date and time
-      let endDateTime = new Date(dueDate + ' ' + dueTime); // Combine due date and time
-
-      // Send task details to the server
-      $.ajax({
-        type: 'POST',
-        url: '/add-task',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          username: '{{username}}',
-          title: title,
-          start: startDateTime,
-          end: endDateTime,
-          length: duration  // Include task-specific field
-        }),
-        success: function (response) {
-          // Handle success response if needed
-          console.log('Task added successfully:', response);
-          // Refresh the calendar or any other action you need
-          // Update the task list with the newly added task
-          $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
-        },
-        error: function (xhr, status, error) {
-          // Handle error response if needed
-          console.error('Error adding task:', error);
-        }
-      });
-
-      // Clear the input fields
-      $('#taskName').val('');
-      $('#duration').val('');
-      $('#startDate').val('');
-      $('#startTime').val('');
-      $('#dueDate').val('');
-      $('#dueTime').val('');
-    }
 
     $(document).on('click', '.delete-task', function () {
       var taskId = $(this).data('id');
@@ -244,7 +294,6 @@
         }
       });
     });
-
 
     // Define getRandomColor function
     function getRandomColor() {
@@ -346,9 +395,7 @@
           console.error(error); // Log error message
         }
       });
-
     }
-
 
   </script>
 </head>
@@ -363,7 +410,7 @@
     <input class="input" type="text" id="taskName" name="taskName" placeholder="Enter task name">
 
     <label for="duration">Duration (hours):</label>
-    <input class="input" type="number" id="duration" name="duration" placeholder="Enter duration">
+    <input class="input" type="number" id="duration" name="duration" placeholder="Enter duration" min="1">
     <br>
 
     <label for="startDate">When to start:</label>
@@ -376,6 +423,8 @@
     <input class="input" type="time" id="dueTime" name="dueTime">
 
     <button id="addTaskButton">Add Task</button> <!-- Removed onclick attribute -->
+    <br><br>
+    <span id="durationError" style="color: red;"></span> <!-- Display error message here -->
 
     <h2>Tasks</h2>
     <ul id="taskList"></ul>

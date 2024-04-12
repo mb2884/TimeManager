@@ -131,13 +131,12 @@ def getTasks(user_id):
             for task in app_tasks:
                 task_dict = {
                     'title': task.title,
-                    'start': task.start_time.isoformat(),  # Convert datetime to ISO format
-                    'end': task.due_date.isoformat(),  # Convert datetime to ISO format
+                    'start': task.start_time.isoformat() if task.start_time else None,  # Convert datetime to ISO format
+                    'end': task.due_date.isoformat() if task.due_date else None,  # Convert datetime to ISO format
                     'length': task.est_length,
                     'id': task.id
                 }
                 task_dicts.append(task_dict)
-
         return task_dicts
 
     except Exception as ex:

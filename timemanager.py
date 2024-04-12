@@ -133,6 +133,7 @@ def get_events():
 
 @app.route('/get-tasks', methods=['GET'])
 def get_tasks():
+ 
     username = auth.authenticate()
     user_id = database.get_user_id(username)
     
