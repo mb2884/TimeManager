@@ -11,6 +11,7 @@ from flask import request, jsonify, redirect
 import dbfuncs as database
 import auth
 import urllib.parse
+import tasksplitter
 
 # -----------------------------------------------------------------------
 
@@ -71,7 +72,25 @@ def add_task():
     user_id = database.get_user_id(username)
 
     task_id = database.addTask(user_id, title, start, end, length)
+    tasksplitter.split_tasks(user_id, title, start, end, length, task_id)
     return jsonify({'id': task_id})
+
+@app.route('/update-event', methods=['POST'])
+def update_event(evemt):
+    try:
+        data = request.get_json()
+        event_id = data.get('event_id')
+        title = data.get('title')
+        start = data.get('start')
+        end = data.get('end')
+        all_day = data.get('allDay')
+        
+        # Update the event in the database
+        database.update_event(event_id, title, start, end, all_day)
+        
+        return jsonify({'message': 'Event updated successfully'})
+    except Exception as ex:
+        return jsonify({'error': str(ex)}), 500
 
 @app.route('/delete-event', methods=['POST'])
 def delete_event():
@@ -89,12 +108,12 @@ def delete_event():
         # If an error occurs, return an error message
         return jsonify({'error': str(ex)}), 500
 
-@app.route('/delete-task', methods=['POST'])
+@app.route('/delete-task', methods=['GET'])
 def delete_task():
     try:
         # Get the event ID from the request
-        data = request.get_json()
-        task_id = data.get('task_id')
+        task_id = request.args.get('id')
+        print("reported task_id: ", task_id)
 
         # Implement the logic to delete the event from the database
         database.delete_task(task_id)

@@ -41,7 +41,7 @@ def get_user_id(username):
 
 # -----------------------------------------------------------------------
 
-def addEvent(user_id, title, start_time, end_time, all_day):
+def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -51,7 +51,8 @@ def addEvent(user_id, title, start_time, end_time, all_day):
                 title=title,
                 start_time=start_time,
                 end_time=end_time,
-                all_day=all_day
+                all_day=all_day,
+                parent_task_id=parent_task_id
             )
             session.add(app_event)
             session.commit()
@@ -85,13 +86,16 @@ def addTask(user_id, title, start_time, due_date, est_length):
 
 # -----------------------------------------------------------------------
 
-def getEvents(user_id):
+def getEvents(user_id, filter_by_date=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
-            # Query all AppEvent objects from the database
-            app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
+
+            if filter_by_date:
+                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).filter(database.AppEvent.start_time >= filter_by_date[0]).filter(database.AppEvent.end_time <= filter_by_date[1]).order_by(database.AppEvent.start_time).all()
+            else:
+                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
 
             # Convert each AppEvent object into a dictionary
             event_dicts = []
@@ -101,7 +105,8 @@ def getEvents(user_id):
                     'start': event.start_time.isoformat(),  # Convert datetime to ISO format
                     'end': event.end_time.isoformat(),  # Convert datetime to ISO format
                     'allDay': event.all_day,
-                    'id': event.id
+                    'id': event.id,
+                    'parentTaskID': event.parent_task_id
                 }
                 event_dicts.append(event_dict)
 
@@ -140,6 +145,37 @@ def getTasks(user_id):
         sys.exit(1)
 
 # -----------------------------------------------------------------------
+
+def updateEvents(user_id):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+
+            if filter_by_date:
+                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).filter(database.AppEvent.start_time >= filter_by_date[0]).filter(database.AppEvent.end_time <= filter_by_date[1]).order_by(database.AppEvent.start_time).all()
+            else:
+                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
+
+            # Convert each AppEvent object into a dictionary
+            event_dicts = []
+            for event in app_events:
+                event_dict = {
+                    'title': event.title,
+                    'start': event.start_time.isoformat(),  # Convert datetime to ISO format
+                    'end': event.end_time.isoformat(),  # Convert datetime to ISO format
+                    'allDay': event.all_day,
+                    'id': event.id,
+                    'parentTaskID': event.parent_task_id
+                }
+                event_dicts.append(event_dict)
+
+        return event_dicts
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+#----------------------------
 
 
 def delete_event(event_id):

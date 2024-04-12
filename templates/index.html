@@ -9,6 +9,7 @@
   
   <link href='static/style.css' rel='stylesheet' />
   <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
       var calendarEl = document.getElementById('calendar');
 
@@ -81,9 +82,7 @@
         }
       });
 
-
       calendar.render();
-
 
       // Get events from the server
       $.ajax({
@@ -98,35 +97,56 @@
           // Handle errors and provide feedback to the user
         }
       });
-
-      // Get tasks from the server
-      $.ajax({
-          type: 'GET',
-          url: '/get-tasks',
-          success: function (response) {
-              // Add tasks to the calendar
-              calendar.addEventSource(response);
-          },
-          error: function (xhr, status, error) {
-              console.error(error);
-              // Handle errors and provide feedback to the user
-          }
-      });
-
       // Event listener for the "Add Task" button click
       document.getElementById('addTaskButton').addEventListener('click', addTask);
-      
     });
 
-    function addTask() {
-      var title = document.getElementById('taskName').value;
-      var duration = document.getElementById('duration').value;
-      var dueDate = document.getElementById('dueDate').value;
-      var dueTime = document.getElementById('dueTime').value;
+    $.ajax({
+      type: 'GET',
+      url: '/get-tasks',
+      success: function (response) {
+        // Add tasks to the list
+        response.forEach(function (task) {
+          console.log(task);
+          $('#taskList').append('<li>' + task.title + '<a href="#" class="delete-task" data-id="' + task.id + '">❌</a></li>');
+        });
+        
+        // Attach click event handler for delete task links
+        $('#taskList').on('click', 'a.delete-task', function(event) {
+          event.preventDefault();
+          var taskId = $(this).data('id'); // Use the data-id attribute of the clicked element
+          console.log(taskId);
+          $.ajax({
+            type: 'GET',
+            url: '/delete-task?id=' + taskId,
+            success: function(response) {
+              // Remove the task from the list if deletion is successful
+              $(event.target).closest('li').remove();
+              alert(response.message); // Display success message
+            },
+            error: function(xhr, status, error) {
+              alert(xhr.responseText); // Display error message
+            }
+          });
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error(error);
+        // Handle errors and provide feedback to the user
+      }
+    });
+    
 
-      var startDateTime = dueDate + 'T' + dueTime; // Combine date and time
-      var endDateTime = new Date(startDateTime);
-      endDateTime.setHours(endDateTime.getHours() + parseInt(duration)); // Calculate end time
+    function addTask() {
+      let title = $('#taskName').val();
+      let duration = Math.round(parseFloat($('#duration').val()));
+      let startDate = $('#startDate').val();
+      let startTime = $('#startTime').val();
+      let dueDate = $('#dueDate').val();
+      let dueTime = $('#dueTime').val();
+
+      let startDateTime = new Date(startDate + ' ' + startTime); // Combine start date and time
+      let endDateTime = new Date(dueDate + ' ' + dueTime); // Combine due date and time
 
       // Send task details to the server
       $.ajax({
@@ -134,35 +154,56 @@
         url: '/add-task',
         contentType: 'application/json',
         data: JSON.stringify({
-          username: '{{username}}',
-          title: title,
-          start: startDateTime,
-          end: endDateTime,
-          length: duration  // Include task-specific field
+            username: '{{username}}',
+            title: title,
+            start: startDateTime,
+            end: endDateTime,
+            length: duration  // Include task-specific field
         }),
         success: function (response) {
-          // Handle success response if needed
-          console.log('Task added successfully:', response);
-          // Refresh the calendar or any other action you need
-          calendar.addTask({
-            id: response.id, // Assuming response.id contains the task ID
-            title: title,
-            start: start_time, // Assuming start time is the same as due date for tasks
-            end: due_date, // Assuming due date is the end time for tasks
-            est_length: est_length // Assuming you want to store estimated length in the task object
-          });
+            // Handle success response if needed
+            console.log('Task added successfully:', response);
+            // Refresh the calendar or any other action you need
+            // Get events from the server
+            $.ajax({
+                type: 'GET',
+                url: '/get-events',
+                success: function (events) {
+                    // Clear the task list
+                    $('#taskList').empty();
+                    // Add events to the calendar
+                    calendar.addEventSource(events);
+                    calendar.render();
+                    // Add tasks to the task list
+                    events.forEach(function(event) {
+                      console.log(event);
+                        $('#taskList').append('<li>' + event.title + '<a href="#" class="delete-task" data-id="' + event.id + '">❌</a></li>');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    // Handle errors and provide feedback to the user
+                }
+            });
         },
+        
         error: function (xhr, status, error) {
-          // Handle error response if needed
-          console.error('Error adding task:', error);
+            // Handle error response if needed
+            console.error('Error adding task:', error);
         }
-      });
+    });
+
+
+      
 
       // Clear the input fields
-      document.getElementById('taskName').value = '';
-      document.getElementById('duration').value = '';
-      document.getElementById('dueDate').value = '';
-      document.getElementById('dueTime').value = '';
+      // $('#taskName').val('');
+      // $('#duration').val('');
+      // $('#startDate').val('');
+      // $('#startTime').val('');
+      // $('#dueDate').val('');
+      // $('#dueTime').val('');
+    
     }
 
     // Define getRandomColor function
@@ -252,6 +293,38 @@
     setInterval(updateText, 3000);
     });
 
+    document.getElementById('saveButton').addEventListener('click', function() {
+    saveEvents();
+    saveTasks();
+});
+
+function saveEvents() {
+    // Get all events from the FullCalendar instance
+    var events = calendar.getEvents();
+
+    // Send AJAX request to save each event to the server
+    events.forEach(function(event) {
+        $.ajax({
+            type: 'POST',
+            url: '/add-event',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                username: '{{username}}',
+                title: event.title,
+                start: event.start.toISOString(),
+                end: event.end.toISOString(),
+                allDay: event.allDay
+            }),
+            success: function(response) {
+                console.log('Event saved successfully:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving event:', error);
+            }
+        });
+    });
+}
+
     function logout() {
       // Call the logout route when the button is clicked
       $.ajax({
@@ -273,6 +346,7 @@
 
 <body>
   <div id='calendar'></div>
+  
   <div class="sidebarleft">
     <h2>Add Task</h2>
     <h2> Hello {{username}} </h2>
@@ -283,11 +357,19 @@
     <input class="input" type="number" id="duration" name="duration" placeholder="Enter duration">
     <br>
 
+    <label for="startDate">When to start:</label>
+    <input class="input" type="date" id="startDate" name="startDate"> 
+    <input class="input" type="time" id="startTime" name="startTime">
+    <br>
+    
     <label for="dueDate">When Due:</label>
     <input class="input" type="date" id="dueDate" name="dueDate"> 
     <input class="input" type="time" id="dueTime" name="dueTime">
 
     <button id="addTaskButton">Add Task</button> <!-- Removed onclick attribute -->
+
+    <h2>Tasks</h2>
+    <ul id="taskList"></ul>
 </div>
   <div class="sidebarright">
     <h2 id="dynamicText"> Loading...</h2>

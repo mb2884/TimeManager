@@ -28,6 +28,8 @@ class AppEvent(Base):
     start_time = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     end_time = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     all_day = sqlalchemy.Column(sqlalchemy.Boolean)
+    parent_task_id = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey('app_task.id'))
 
 
 class AppTask(Base):
