@@ -1,20 +1,12 @@
 #!/usr/bin/env python
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # tasksplitter.py
 # Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-import sqlalchemy.ext.declarative
-import sqlalchemy
-import os
-import flask
-from flask import request, jsonify, redirect
 import dbfuncs as database
-import auth
-import urllib.parse
 from dateutil import parser
-from dateutil import relativedelta
 import datetime
 
 class time_slot:

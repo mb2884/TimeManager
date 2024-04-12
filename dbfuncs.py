@@ -5,16 +5,15 @@
 # Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
 # ----------------------------------------------------------------------
 
-# import os
+import os
 import sys
 import sqlalchemy
 import sqlalchemy.orm
-# import dotenv
+import dotenv
 import database
 
-# dotenv.load_dotenv()
-# DATABASE_URL = os.getenv['DATABASE_URL']
-DATABASE_URL = 'postgresql://timemanager_c52x_user:XYwubY5k8RCdkL19NysChiHfsVgeMSCh@dpg-co0rh6a0si5c73fjt8cg-a.ohio-postgres.render.com/timemanager_c52x'
+dotenv.load_dotenv()
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 # ----------------------------------------------------------------------
 

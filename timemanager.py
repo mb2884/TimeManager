@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # timemanager.py
 # Authors: Shelby Fulton, Matthew Barrett, Jessica Lin, Alfred Ripoll
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 import os
 import flask
-from flask import request, jsonify, redirect
+from flask import request, jsonify
+import flask_wtf.csrf
+import flask_talisman
 import dbfuncs as database
 import auth
-import urllib.parse
 import tasksplitter
+import dotenv
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 app = flask.Flask(__name__, )
 
@@ -22,10 +24,13 @@ app = flask.Flask(__name__, )
 app.static_folder = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'static')
 
-os.environ['APP_SECRET_KEY'] = 'secretkey'
-app.secret_key = os.environ['APP_SECRET_KEY']
+dotenv.load_dotenv()
+app.secret_key = os.getenv('APP_SECRET_KEY')
 
-# -----------------------------------------------------------------------
+flask_wtf.csrf.CSRFProtect(app)
+flask_talisman.Talisman(app, content_security_policy=None)
+
+# ----------------------------------------------------------------------
 
 # Routes for authentication.
 
@@ -45,7 +50,7 @@ def logoutcas():
 #    return redirect(redirect_url)
 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 
 @app.route('/add-event', methods=['POST'])
@@ -153,7 +158,7 @@ def index():
     response = flask.make_response(html_code)
     return response
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True)
