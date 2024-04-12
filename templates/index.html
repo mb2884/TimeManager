@@ -147,6 +147,28 @@
         }
       });
 
+      setInterval(refreshCalendar, 1000);
+
+      // Define refreshCalendar function
+      function refreshCalendar() {
+        // Get events from the server
+        $.ajax({
+          type: 'GET',
+          url: '/get-events',
+          success: function (events) {
+            // Clear the calendar
+            calendar.removeAllEvents();
+            // Add events to the calendar
+            calendar.addEventSource(events);
+            calendar.render();
+          },
+          error: function (xhr, status, error) {
+            console.error(error);
+            // Handle errors and provide feedback to the user
+          }
+        });
+      };
+
       // Function to validate all task fields
       function validateTaskFields() {
         var title = $('#taskName').val();
@@ -215,6 +237,8 @@
             // Refresh the calendar or any other action you need
             // Update the task list with the newly added task
             $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
+
+            fetchAndDisplayTasks();
           },
           error: function (xhr, status, error) {
             // Handle error response if needed

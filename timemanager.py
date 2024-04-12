@@ -27,8 +27,8 @@ app.static_folder = os.path.join(
 dotenv.load_dotenv()
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
-flask_wtf.csrf.CSRFProtect(app)
-flask_talisman.Talisman(app, content_security_policy=None)
+# flask_wtf.csrf.CSRFProtect(app)
+# flask_talisman.Talisman(app, content_security_policy=None)
 
 # ----------------------------------------------------------------------
 
