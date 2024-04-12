@@ -122,10 +122,10 @@
             success: function(response) {
               // Remove the task from the list if deletion is successful
               $(event.target).closest('li').remove();
-              alert(response.message); // Display success message
+              console.log(response.message); // Display success message
             },
             error: function(xhr, status, error) {
-              alert(xhr.responseText); // Display error message
+              console.log(xhr.responseText); // Display error message
             }
           });
         });

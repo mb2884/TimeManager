@@ -33,7 +33,7 @@ CREATE TABLE app_event (
     all_day BOOLEAN,
     parent_task_id INT,
     FOREIGN KEY (user_id) REFERENCES app_user(id),
-    FOREIGN KEY (parent_task_id) REFERENCES app_task(id)
+    FOREIGN KEY (parent_task_id) REFERENCES app_task(id) ON DELETE CASCADE
 );
 
 
