@@ -98,3 +98,56 @@ body {
 }
 
 
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+
+
+/* Customize the calendar header */
+.fc-header-toolbar {
+  background-color: #f0f0f0; /* Set header background color */
+  border-radius: 8px 8px 0 0; /* Add border radius */
+}
+
+.fc-header-toolbar h2 {
+  font-size: 18px; /* Adjust font size */
+  margin: 0; /* Remove default margin */
+  padding: 10px; /* Add padding */
+}
+
+/* Customize the buttons in the calendar header */
+.fc-header-toolbar button {
+  background-color: transparent; /* Set button background color */
+  color: #333; /* Set button text color */
+  border: none; /* Remove button border */
+  font-size: 14px; /* Adjust font size */
+  padding: 5px 10px; /* Add padding */
+}
+
+/* Customize the calendar events */
+.fc-event {
+  background-color: #007bff; /* Set event background color */
+  color: #fff; /* Set event text color */
+  border: none; /* Remove event border */
+  border-radius: 4px; /* Add border radius */
+  padding: 4px 8px; /* Add padding */
+}
+
+.fc-event:hover {
+  background-color: #0056b3; /* Darken event background color on hover */
+}
+
+
+
