@@ -12,7 +12,7 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(
-        description='The registrar application')
+        description='The calendar application')
     parser.add_argument('port', type=int,
                         help='the port at which the'
                         ' server should listen')
