@@ -138,7 +138,7 @@ button:hover {
 
 /* Customize the calendar events */
 .fc-event {
-  background-color: #007bff; /* Set event background color */
+  /* background-color: #007bff; Set event background color */
   color: #fff; /* Set event text color */
   border: none; /* Remove event border */
   border-radius: 4px; /* Add border radius */

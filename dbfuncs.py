@@ -105,7 +105,8 @@ def getEvents(user_id, filter_by_date=None):
                     'end': event.end_time.isoformat(),  # Convert datetime to ISO format
                     'allDay': event.all_day,
                     'id': event.id,
-                    'parentTaskID': event.parent_task_id
+                    'parentTaskID': event.parent_task_id,
+                    'color': '#421868'
                 }
                 event_dicts.append(event_dict)
 
