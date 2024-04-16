@@ -145,9 +145,8 @@ button:hover {
   padding: 4px 8px; /* Add padding */
 }
 
-.fc-event:hover {
-  background-color: #0056b3; /* Darken event background color on hover */
+
+
+.fc-daygrid-dot-event {
+  color: #000000;
 }
-
-
-
