@@ -40,7 +40,7 @@ def get_user_id(username):
 
 # ----------------------------------------------------------------------
 
-def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None):
+def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -51,7 +51,8 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None)
                 start_time=start_time,
                 end_time=end_time,
                 all_day=all_day,
-                parent_task_id=parent_task_id
+                parent_task_id=parent_task_id,
+                color=color
             )
             session.add(app_event)
             session.commit()
@@ -106,7 +107,7 @@ def getEvents(user_id, filter_by_date=None):
                     'allDay': event.all_day,
                     'id': event.id,
                     'parentTaskID': event.parent_task_id,
-                    'color': '#421868'
+                    'color': event.color
                 }
                 event_dicts.append(event_dict)
 

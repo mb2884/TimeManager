@@ -61,7 +61,8 @@
                 title: title,
                 start: arg.start.toISOString(),
                 end: arg.end.toISOString(),
-                allDay: arg.allDay
+                allDay: arg.allDay,
+                color: "007bff"
               }),
               success: function (response) {
                 if (response.id) {
@@ -71,7 +72,7 @@
                     end: arg.end,
                     allDay: arg.allDay,
                     id: response.id,
-                    color: '#421868'
+                    color: response.color
                   });
                   refreshCalendar(); // Refresh the calendar after adding the event
                 }

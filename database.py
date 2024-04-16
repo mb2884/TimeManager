@@ -30,6 +30,7 @@ class AppEvent(Base):
     all_day = sqlalchemy.Column(sqlalchemy.Boolean)
     parent_task_id = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey('app_task.id'))
+    color = sqlalchemy.Column(sqlalchemy.Text)
 
 
 class AppTask(Base):
