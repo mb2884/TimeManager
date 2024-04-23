@@ -301,9 +301,11 @@
       // If the tutorial has been completed before, hide it and return
       if (tutorialCompleted === 'true') {
         document.getElementById('tutorial').style.display = 'none';
+        document.getElementById('runTutorialLink').style.display = 'block'; // Show the link
       } else {
-        // Show the tutorial
+        // show the tutorial
         document.getElementById('tutorial').style.display = 'block';
+        document.getElementById('runTutorialLink').style.display = 'none'; // Hide the link
       }
 
       // Tutorial steps
@@ -330,8 +332,25 @@
             // If there are no more steps, hide the tutorial and mark it as completed
             document.getElementById("tutorial").style.display = "none";
             localStorage.setItem("tutorialCompleted", "true");
+            // show the run tutorial link
+            document.getElementById('runTutorialLink').style.display = 'block';
           }
         }
+      });
+      // Function to run the tutorial
+      function runTutorial() {
+        // Show the tutorial container
+        document.getElementById('tutorial').style.display = 'block';
+        // Reset tutorial steps to the beginning
+        currentStepIndex = 0;
+        showStep(currentStepIndex);
+        // Hide the "Run Tutorial" link after starting the tutorial
+        document.getElementById('runTutorialLink').style.display = 'none';
+      }
+
+      // Event listener for the "Run Tutorial" link
+      document.getElementById('runTutorialLink').addEventListener('click', function () {
+        runTutorial();
       });
     });
 
@@ -509,13 +528,14 @@
           <p>You can also hold and drag in the Day view to add events at specific times.</p>
       </div>
       <div class="tutorial-step" id="step5">
-          <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Add Task button.</p>
+          <p>Add your custom tasks in the left sidebar; you can see the tasks you added by scrolling below the Add Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
-          <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can click on them in the calendar, and to delete tasks, you can click on the red X icon in the Tasks sidebar. Happy managing!</p>
+          <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can click on them in the calendar, and to delete tasks, you can click on the ❌ icon in the Tasks sidebar. Happy managing!</p>
       </div>
     </div>
     <h2 id="dynamicText"> Loading...</h2>
+    <a href="#" id="runTutorialLink" style="display: none; position: absolute; bottom: 10px; right: 10px; font-size: 16px;">Run Tutorial</a>
   </div>
   <button onclick="logout()" id="logoutButton" style="position: absolute; top: 10px; right: 10px;">Logout</button>
 </body>
