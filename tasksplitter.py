@@ -27,8 +27,8 @@ def split_tasks(user_id, title, start, end, length, task_id):
     availableTimeSlots = []
     
     for i in range(len(events) - 1):
-        startTime = parser.parse(events[i]['end']).replace(tzinfo=None)
-        endTime = parser.parse(events[i + 1]['start']).replace(tzinfo=None)
+        startTime = parser.parse(events[i]['end']).replace(tzinfo=None) - datetime.timedelta(hours=4)
+        endTime = parser.parse(events[i + 1]['start']).replace(tzinfo=None) - datetime.timedelta(hours=4)
         if (endTime - startTime).total_seconds() >= 1800:
             availableTimeSlots.append(time_slot(startTime, endTime))
     

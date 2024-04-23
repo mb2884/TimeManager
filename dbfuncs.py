@@ -40,11 +40,14 @@ def get_user_id(username):
 
 # ----------------------------------------------------------------------
 
-def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None):
+def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
+            if days_of_week:
+                days_of_week = ','.join(str(x) for x in days_of_week)
+            print("Event info: ", user_id, title, start_time, end_time, all_day, parent_task_id, color, days_of_week)
             app_event = database.AppEvent(
                 user_id=user_id,
                 title=title,
@@ -52,7 +55,8 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
                 end_time=end_time,
                 all_day=all_day,
                 parent_task_id=parent_task_id,
-                color=color
+                color=color,
+                days_of_week=days_of_week
             )
             session.add(app_event)
             session.commit()
@@ -100,6 +104,11 @@ def getEvents(user_id, filter_by_date=None):
             # Convert each AppEvent object into a dictionary
             event_dicts = []
             for event in app_events:
+                days_of_week = []
+                if event.days_of_week:
+                    days_of_week = event.days_of_week.split(',')
+                    days_of_week = [int(x) for x in days_of_week]
+                    
                 event_dict = {
                     'title': event.title,
                     'start': event.start_time.isoformat(),  # Convert datetime to ISO format
@@ -107,7 +116,8 @@ def getEvents(user_id, filter_by_date=None):
                     'allDay': event.all_day,
                     'id': event.id,
                     'parentTaskID': event.parent_task_id,
-                    'color': event.color
+                    'color': event.color,
+                    'daysOfWeek': days_of_week
                 }
                 event_dicts.append(event_dict)
 
