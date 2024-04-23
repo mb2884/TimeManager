@@ -94,7 +94,6 @@ body {
   padding: 20px;
   box-sizing: border-box;
   font-size: 2em; /* Adjust font size */
-  line-height: 2em; /* Adjust line height */
 }
 
 
@@ -149,4 +148,36 @@ button:hover {
 
 .fc-daygrid-dot-event {
   color: #000000;
+}
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 20%; /* Adjust according to the width of the left sidebar */
+  right: 20%; /* Adjust according to the width of the right sidebar */
+  padding: 10px 100px 20px; /* Horizontal padding to match the padding in the tutorial container */
+}
+
+.tutorial-container {
+  background-color: #006400; /* Dark green background */
+  color: #ffffff; /* White text color */
+  padding: 20px 20px;
+  border-radius: 8px; /* Add border radius */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  max-width: calc(100% - 40px); /* Set a maximum width */
+  max-height: calc(100vh - 320px); /* Adjust the maximum height as needed */
+  margin-left: auto; /* Center the container horizontally */
+  margin-right: auto; /* Center the container horizontally */
+  font-size: 16px; /* Adjust font size */
+  overflow-y: auto; /* Enable vertical scrolling */
+  margin-top: 40px;
+}
+
+.tutorial-step {
+  display: none;
+}
+
+.tutorial-step {
+  display: none;
+  height: 100px; /* Set a fixed height */
 }

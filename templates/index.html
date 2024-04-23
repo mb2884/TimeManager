@@ -292,8 +292,47 @@
           }
         });
       }
-          // On page load, fetch and display tasks
-    fetchAndDisplayTasks();
+      // On page load, fetch and display tasks
+      fetchAndDisplayTasks();
+
+      // Check if the tutorial has been completed before
+      var tutorialCompleted = localStorage.getItem('tutorialCompleted');
+
+      // If the tutorial has been completed before, hide it and return
+      if (tutorialCompleted === 'true') {
+        document.getElementById('tutorial').style.display = 'none';
+      } else {
+        // Show the tutorial
+        document.getElementById('tutorial').style.display = 'block';
+      }
+
+      // Tutorial steps
+      var steps = document.querySelectorAll(".tutorial-step");
+      var currentStepIndex = 0;
+
+      // Function to show a specific step
+      function showStep(index) {
+        steps.forEach(function (step, i) {
+          step.style.display = i === index ? "block" : "none";
+        });
+      }
+
+      // Show the first step initially
+      showStep(currentStepIndex);
+
+      // Add event listener for the Enter key to advance the tutorial steps
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          currentStepIndex++;
+          if (currentStepIndex < steps.length) {
+            showStep(currentStepIndex);
+          } else {
+            // If there are no more steps, hide the tutorial and mark it as completed
+            document.getElementById("tutorial").style.display = "none";
+            localStorage.setItem("tutorialCompleted", "true");
+          }
+        }
+      });
     });
 
 
@@ -430,8 +469,8 @@
   <div id='calendar'></div>
 
   <div class="sidebarleft">
+    <h2> Hello, {{username}} </h2>
     <h2>Add Task</h2>
-    <h2> Hello {{username}} </h2>
     <label for="taskName">Task Name:</label>
     <input class="input" type="text" id="taskName" name="taskName" placeholder="Enter task name">
 
@@ -456,6 +495,26 @@
     <ul id="taskList"></ul>
   </div>
   <div class="sidebarright">
+    <div class="tutorial-container" id="tutorial">
+      <div class="tutorial-step" id="step1">
+          <p>Welcome to your Task Manager! Press Enter to go through the tutorial.</p>
+      </div>
+      <div class="tutorial-step" id="step2">
+          <p>Toggle your calendar view with the Month/Week/Day options.</p>
+      </div>
+      <div class="tutorial-step" id="step3">
+          <p>Click on any day in the calendar to add an event to block out your schedule.</p>
+      </div>
+      <div class="tutorial-step" id="step4">
+          <p>You can also hold and drag in the Day view to add events at specific times.</p>
+      </div>
+      <div class="tutorial-step" id="step5">
+          <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Add Task button.</p>
+      </div>
+      <div class="tutorial-step" id="step6">
+          <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can click on them in the calendar, and to delete tasks, you can click on the red X icon in the Tasks sidebar. Happy managing!</p>
+      </div>
+    </div>
     <h2 id="dynamicText"> Loading...</h2>
   </div>
   <button onclick="logout()" id="logoutButton" style="position: absolute; top: 10px; right: 10px;">Logout</button>
