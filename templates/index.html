@@ -215,11 +215,6 @@
         }
 
 
-        $('#durationError').text('');
-        return true;
-      }
-
-
       // Function to add task
       function addTask() {
         // Validate all task fields
@@ -284,11 +279,19 @@
         var startTime = $('#startTime').val();
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
-        var color = $('#color').val();
-
-
+        var color = $('#color').val(); 
+        var startDateTime = new Date(startDate + ' ' + startTime);
+        var endDateTime = new Date(dueDate + ' ' + dueTime);
+        
+        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '') {
+          $('#TimeError').text('Please fill out all fields.');
+          return false;
+        }
+        if (endDateTime <= startDateTime) {
+          $('#TimeError').text('End date must be after start date.');
+          return false;
+        }
         return true;
-
       };
 
       function addEvent() {
@@ -307,7 +310,7 @@
         var endTime = $('#endTime').val();
         var end = new Date(endDate + ' ' + endTime);
         end.setHours(end.getHours() - 4); // Subtract 4 hours
-        console.log(end.toISOString()); // Convert to ISO string
+        console.log(end.toISOString()); // Convert to ISO string  
         
         var color = $('#color').val();
 
@@ -774,6 +777,8 @@
 
     <button id="addEventButton">Create Event</button>
     <br><br>
+    <span id="TimeError" style="color: red;"></span> <!-- Display error message here -->
+
 
 
   </div>
