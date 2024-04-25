@@ -54,5 +54,5 @@ def split_tasks(user_id, title, start, end, length, task_id):
         for j in range(chosenSlot.num_events):
             startTime = chosenSlot.start + datetime.timedelta(minutes=30 * j)
             endTime = startTime + datetime.timedelta(minutes=30)
-            database.addEvent(user_id, title, startTime, endTime, False, task_id, "#4CAF50", None)
+            database.addEvent(user_id, title, startTime, endTime, False, task_id, "#4CAF50", None, None, None)
             

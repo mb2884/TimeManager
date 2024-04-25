@@ -40,14 +40,15 @@ def get_user_id(username):
 
 # ----------------------------------------------------------------------
 
-def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None):
+          
+def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             if days_of_week:
                 days_of_week = ','.join(str(x) for x in days_of_week)
-            print("Event info: ", user_id, title, start_time, end_time, all_day, parent_task_id, color, days_of_week)
+            print("Event info: ", user_id, title, start_time, end_time, all_day, parent_task_id, color, days_of_week, start_recur, end_recur)
             app_event = database.AppEvent(
                 user_id=user_id,
                 title=title,
@@ -56,7 +57,9 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
                 all_day=all_day,
                 parent_task_id=parent_task_id,
                 color=color,
-                days_of_week=days_of_week
+                days_of_week=days_of_week,
+                start_recur=start_recur,
+                end_recur=end_recur
             )
             session.add(app_event)
             session.commit()
@@ -110,6 +113,16 @@ def getEvents(user_id, filter_by_date=None):
                     days_of_week = [int(x) for x in days_of_week]
                 if not days_of_week:
                     days_of_week = None
+                    start_recur = None
+                    end_recur = None
+                    start_time = None
+                    end_time = None
+                else:
+                    start_recur = event.start_recur.isoformat()
+                    end_recur = event.end_recur.isoformat()
+                    # Takes just the time from the datetime object
+                    start_time = event.start_time.time().isoformat()
+                    end_time = event.end_time.time().isoformat()
                     
                 event_dict = {
                     'title': event.title,
@@ -119,7 +132,12 @@ def getEvents(user_id, filter_by_date=None):
                     'id': event.id,
                     'parentTaskID': event.parent_task_id,
                     'color': event.color,
-                    'daysOfWeek': days_of_week
+                    'daysOfWeek': days_of_week,
+                    'startRecur': start_recur,
+                    'endRecur': end_recur,
+                    'startTime': start_time,
+                    'endTime': end_time
+                    
                 }
                 event_dicts.append(event_dict)
 

@@ -305,6 +305,8 @@
         var end = new Date(endDate + ' ' + endTime);
         var color = $('#color').val();
 
+        var recurEndDate = $('#recurEndDate').val();
+
         var sunday = $('#sunday').is(':checked');
         var monday = $('#monday').is(':checked');
         var tuesday = $('#tuesday').is(':checked');
@@ -336,7 +338,9 @@
             end: end,
             allDay: false,
             daysOfWeek: daysOfWeek,
-            color: color
+            color: color,
+            startRecur: start,
+            endRecur: recurEndDate
           }),
           success: function (response) {
             if (response.id) {
@@ -347,7 +351,12 @@
                 allDay: false,
                 id: response.id,
                 color: response.color,
-                daysOfWeek: response.daysOfWeek
+                daysOfWeek: response.daysOfWeek,
+                startTime: response.startTime,
+                endTime: response.endTime,
+                startRecur: response.startRecur,
+                endRecur: response.endRecur
+
               });
               refreshCalendar(); // Refresh the calendar after adding the event
             }
@@ -672,7 +681,7 @@
     <button id="eventAdder">Add Event</button>
 
     <h2>Add Task</h2>
-    <h2> Hello {{username}} </h2>
+    <h2> Hello, {{username}} </h2>
     <label for="taskName">Task Name:</label>
     <input class="input" type="text" id="taskName" name="taskName" placeholder="Enter task name">
 
@@ -709,7 +718,7 @@
 
     <!-- event sidebar content here-->
     <h2>Add Event</h2>
-    <h2> Hello {{username}} </h2>
+    <h2> Hello, {{username}} </h2>
     <label for="eventName">Event Name:</label>
     <input class="input" type="text" id="eventName" name="eventName" placeholder="Enter event name">
 
@@ -751,6 +760,9 @@
       <div><strong>F</strong></div>
       <div><strong>S</strong></div>
     </div>
+    <br>
+    <label for="endTimeDate">Repeat weekly until when?</label>
+    <input class="input" type="date" id="recurEndDate" name="recurEndDate">
     <br>
 
     <button id="addEventButton">Create Event</button>

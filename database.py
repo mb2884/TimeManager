@@ -32,6 +32,8 @@ class AppEvent(Base):
         sqlalchemy.Integer, sqlalchemy.ForeignKey('app_task.id'))
     color = sqlalchemy.Column(sqlalchemy.Text)
     days_of_week = sqlalchemy.Column(sqlalchemy.Text)
+    start_recur = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
+    end_recur = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
 
 
 class AppTask(Base):

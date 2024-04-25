@@ -34,6 +34,8 @@ CREATE TABLE app_event (
     parent_task_id INT,
     color TEXT,
     days_of_week TEXT,
+    start_recur TIMESTAMP,
+    end_recur TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES app_user(id),
     FOREIGN KEY (parent_task_id) REFERENCES app_task(id) ON DELETE CASCADE
 );

@@ -81,10 +81,13 @@ def add_event():
    all_day = data.get('allDay')
    days_of_week = data.get('daysOfWeek')
    color = data.get('color')
+   start_recur = data.get('startRecur')
+   end_recur = data.get('endRecur')
+   
    user_id = database.get_user_id(username)
    
-   print("Adding event: ", username, title, start, end, all_day, color, days_of_week)
-   event_id = database.addEvent(user_id, title, start, end, all_day, None, color, days_of_week)
+   print("Adding event: ", username, title, start, end, all_day, color, days_of_week, start_recur, end_recur)
+   event_id = database.addEvent(user_id, title, start, end, all_day, None, color, days_of_week, start_recur, end_recur)
    return jsonify({'id': event_id})
 
 
