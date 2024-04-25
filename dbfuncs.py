@@ -108,6 +108,8 @@ def getEvents(user_id, filter_by_date=None):
                 if event.days_of_week:
                     days_of_week = event.days_of_week.split(',')
                     days_of_week = [int(x) for x in days_of_week]
+                if not days_of_week:
+                    days_of_week = None
                     
                 event_dict = {
                     'title': event.title,

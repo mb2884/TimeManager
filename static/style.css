@@ -183,15 +183,13 @@ button:hover {
   height: 100px; /* Set a fixed height */
 }
 
-.checkbox-container {
+.box {
   display: flex;
-  flex-wrap: wrap;
-}
+  justify-content: space-between;
+width
 
-.checkbox-container > div {
-  display: flex;
-  align-items: center;
-  margin-right: 20px; /* Add margin between each checkbox-label pair */
+  flex-wrap:wrap;
+  flex-direction:row;
 }
 
 .color-input-container {

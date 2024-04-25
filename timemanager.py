@@ -79,26 +79,13 @@ def add_event():
    start = data.get('start')
    end = data.get('end')
    all_day = data.get('allDay')
-   recurring = data.get('recurring')  # New: Get the recurring option from the request
+   days_of_week = data.get('daysOfWeek')
+   color = data.get('color')
    user_id = database.get_user_id(username)
-  
-   if recurring == 'daily':
-       # Calculate start and end times for each day from the selected day forward
-       start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ')
-       end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ')
-       current_date = start_date
-       while current_date <= end_date:
-           # Add event for the current date
-           database.addEvent(user_id, title, current_date.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), (current_date + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S.%fZ'), all_day)
-           current_date += timedelta(days=1)
-      
-       return jsonify({'message': 'Daily recurring events added successfully'})
-
-
-   else:
-       # Add the event as usual
-       event_id = database.addEvent(user_id, title, start, end, all_day)
-       return jsonify({'id': event_id})
+   
+   print("Adding event: ", username, title, start, end, all_day, color, days_of_week)
+   event_id = database.addEvent(user_id, title, start, end, all_day, None, color, days_of_week)
+   return jsonify({'id': event_id})
 
 
 @app.route('/add-task', methods=['POST'])
@@ -203,6 +190,7 @@ def index():
    username = auth.authenticate()
    html_code = flask.render_template('index.html', username=username)
    response = flask.make_response(html_code)
+   print(database.getEvents(database.get_user_id(username)))
    return response
 
 

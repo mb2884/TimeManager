@@ -69,7 +69,7 @@
                 start: arg.start.toISOString(),
                 end: arg.end.toISOString(),
                 allDay: arg.allDay,
-                recurring: recurring // Add recurring option to the data
+                recurring: null // Add recurring option to the data
               }),
               success: function (response) {
                 if (response.id) {
@@ -230,7 +230,7 @@
 
         let title = $('#taskName').val();
         let duration = Math.round(parseFloat($('#duration').val()));
-        let startDate= $('#startDate').val();
+        let startDate = $('#startDate').val();
         let startTime = $('#startTime').val();
         let dueDate = $('#dueDate').val();
         let dueTime = $('#dueTime').val();
@@ -286,7 +286,7 @@
         var endTime = $('#endTime').val();
         var color = $('#color').val();
 
-        
+
         return true;
 
       };
@@ -304,7 +304,7 @@
         var endTime = $('#endTime').val();
         var end = new Date(endDate + ' ' + endTime);
         var color = $('#color').val();
-        
+
         var sunday = $('#sunday').is(':checked');
         var monday = $('#monday').is(':checked');
         var tuesday = $('#tuesday').is(':checked');
@@ -321,10 +321,10 @@
         if (thursday) daysOfWeek.push(4);
         if (friday) daysOfWeek.push(5);
         if (saturday) daysOfWeek.push(6);
-
+        console.log(daysOfWeek);
         // Send event details to the server
 
-        
+
         let requestData = {
           type: 'POST',
           url: '/add-event',
@@ -682,18 +682,18 @@
     <br>
 
 
-    <label for="startDate">When to start:</label>
+    <label for="startDate">When to start?</label>
     <input class="input" type="date" id="startDate" name="startDate">
     <input class="input" type="time" id="startTime" name="startTime">
     <br>
 
 
-    <label for="dueDate">When Due:</label>
+    <label for="dueDate">When is it due?</label>
     <input class="input" type="date" id="dueDate" name="dueDate">
     <input class="input" type="time" id="dueTime" name="dueTime">
 
 
-    <button id="addTaskButton">Add Task</button> <!-- Removed onclick attribute -->
+    <button id="addTaskButton">Create Task</button> <!-- Removed onclick attribute -->
     <br><br>
     <span id="durationError" style="color: red;"></span> <!-- Display error message here -->
 
@@ -714,13 +714,13 @@
     <input class="input" type="text" id="eventName" name="eventName" placeholder="Enter event name">
 
 
-    <label for="startDate">When to start:</label>
+    <label for="startDate">When does it start?</label>
     <input class="input" type="date" id="firstDate" name="startDate">
     <input class="input" type="time" id="firstTime" name="startTime">
     <br>
 
 
-    <label for="endDate">When to end:</label>
+    <label for="endDate">When does it end?</label>
     <input class="input" type="date" id="endDate" name="endDate">
     <input class="input" type="time" id="endTime" name="endTime">
     <br>
@@ -733,38 +733,27 @@
     <br>
 
     <label for="recurring">Is the event recurring?</label>
-    <div class="checkbox-container">
-      <div>
-        <label for="sunday">Sunday</label>
-        <input type="checkbox" id="sunday" name="sunday" />
-      </div>
-      <div>
-        <label for="monday">Monday</label>
-        <input type="checkbox" id="monday" name="monday" />
-      </div>
-      <div>
-        <label for="tuesday">Tuesday</label>
-        <input type="checkbox" id="tuesday" name="tuesday" />
-      </div>
-      <div>
-        <label for="wednesday">Wednesday</label>
-        <input type="checkbox" id="wednesday" name="wednesday" />
-      </div>
-      <div>
-        <label for="thursday">Thursday</label>
-        <input type="checkbox" id="thursday" name="thursday" />
-      </div>
-      <div>
-        <label for="friday">Friday</label>
-        <input type="checkbox" id="friday" name="friday" />
-      </div>
-      <div>
-        <label for="saturday">Saturday</label>
-        <input type="checkbox" id="saturday" name="saturday" />
-      </div>
+    <div class="box">
+      <label><input type="checkbox" id="sunday"></label>
+      <label><input type="checkbox" id="monday"></label>
+      <label><input type="checkbox" id="tuesday"></label>
+      <label><input type="checkbox" id="wednesday"></label>
+      <label><input type="checkbox" id="thursday"></label>
+      <label><input type="checkbox" id="friday"></label>
+      <label><input type="checkbox" id="saturday"></label>
     </div>
+    <div class="box">
+      <div><strong>S</strong></div>
+      <div><strong>M</strong></div>
+      <div><strong>T</strong></div>
+      <div><strong>W</strong></div>
+      <div><strong>T</strong></div>
+      <div><strong>F</strong></div>
+      <div><strong>S</strong></div>
+    </div>
+    <br>
 
-    <button id="addEventButton">Add Event</button>
+    <button id="addEventButton">Create Event</button>
     <br><br>
 
 
