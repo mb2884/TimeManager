@@ -48,6 +48,10 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
         with sqlalchemy.orm.Session(engine) as session:
             if days_of_week:
                 days_of_week = ','.join(str(x) for x in days_of_week)
+            else:
+                days_of_week = None
+                start_recur = None
+                end_recur = None
             print("Event info: ", user_id, title, start_time, end_time, all_day, parent_task_id, color, days_of_week, start_recur, end_recur)
             app_event = database.AppEvent(
                 user_id=user_id,

@@ -300,9 +300,15 @@
         var startDate = $('#firstDate').val();
         var startTime = $('#firstTime').val();
         var start = new Date(startDate + ' ' + startTime);
+        start.setHours(start.getHours() - 4); // Subtract 4 hours
+        console.log(start.toISOString()); // Convert to ISO string
+        
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var end = new Date(endDate + ' ' + endTime);
+        end.setHours(end.getHours() - 4); // Subtract 4 hours
+        console.log(end.toISOString()); // Convert to ISO string
+        
         var color = $('#color').val();
 
         var recurEndDate = $('#recurEndDate').val();
@@ -723,24 +729,25 @@
     <input class="input" type="text" id="eventName" name="eventName" placeholder="Enter event name">
 
 
-    <label for="startDate">When does it start?</label>
+    <label for="startDate">What time does it start?</label>
     <input class="input" type="date" id="firstDate" name="startDate">
     <input class="input" type="time" id="firstTime" name="startTime">
     <br>
 
 
-    <label for="endDate">When does it end?</label>
+    <label for="endDate">What time does it end?</label>
     <input class="input" type="date" id="endDate" name="endDate">
     <input class="input" type="time" id="endTime" name="endTime">
     <br>
 
-    <label for="color">Color:</label>
+
     <div class="color-input-container">
+      <label for="color">Event Color:⠀⠀</label>
       <input class="input" type="color" id="color" name="color">
       <!--<div class="color-preview" id="colorPreview"></div> -->
     </div>
-    <br>
-
+    <hr>
+    <h3>Recurring?</h3>
     <label for="recurring">Is the event recurring?</label>
     <div class="box">
       <label><input type="checkbox" id="sunday"></label>
@@ -789,6 +796,9 @@
         <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Add Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
+        <p>If you want to create recurring events with more details, you can add those events in the left sidebar as well.</p>
+      </div>
+      <div class="tutorial-step" id="step7">
         <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can
           click on them in the calendar, and to delete tasks, you can click on the red X icon in the Tasks sidebar.
           Happy managing!</p>
