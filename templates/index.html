@@ -192,19 +192,15 @@
         var dueDate = $('#dueDate').val();
         var dueTime = $('#dueTime').val();
 
-
-        if (isNaN(duration) || duration <= 0) {
-          $('#durationError').text('Duration must be a positive number.');
-          return false;
-        }
-
-
         // Check if any field is empty
         if (title.trim() === '' || isNaN(duration) || duration <= 0 || startDate === '' || startTime === '' || dueDate === '' || dueTime === '') {
           $('#durationError').text('Please fill out all fields.');
           return false;
         }
-
+        if (isNaN(duration) || duration <= 0) {
+          $('#durationError').text('Duration must be a positive number.');
+          return false;
+        }
 
         // Check if due date is after start date
         var startDateTime = new Date(startDate + ' ' + startTime);
@@ -212,6 +208,14 @@
         if (endDateTime <= startDateTime) {
           $('#durationError').text('Due date must be after start date.');
           return false;
+        }
+
+        // Check if any error message is displayed
+        if ($('#durationError').text() !== '') {
+            // Clear the error message after 5 seconds
+            setTimeout(function () {
+                $('#durationError').text('');
+            }, 5000); // 5000 milliseconds = 5 seconds
         }
 
       }
@@ -275,8 +279,8 @@
 
       function validateEventFields() {
         var title = $('#eventName').val();
-        var startDate = $('#startDate').val();
-        var startTime = $('#startTime').val();
+        var startDate = $('#firstDate').val();
+        var startTime = $('#firstTime').val();
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var color = $('#color').val(); 
@@ -290,6 +294,10 @@
         if (endDateTime <= startDateTime) {
           $('#TimeError').text('End date must be after start date.');
           return false;
+        }
+        if (title.length > 45) {
+        $('#TimeError').text('Title must be under 45 characters.');
+        return false;
         }
         return true;
       };
