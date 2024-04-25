@@ -228,7 +228,7 @@
         }
         // Check if the title is too long
         if (title.length > 45) {
-          $('#durationError').text('Task title is too long.');
+          $('#durationError').text('Task name must be under 45 characters.');
           return false;
         }
 
@@ -236,6 +236,54 @@
         $('#durationError').text('');
         return true;
       }
+
+      // Function to add task
+      function addTask() {
+        // Validate all task fields
+        if (!validateTaskFields()) {
+          return; // Exit if validation fails
+        }
+
+
+        let title = $('#taskName').val();
+        let duration = Math.round(parseFloat($('#duration').val()));
+        let startDate = $('#startDate').val();
+        let startTime = $('#startTime').val();
+        let dueDate = $('#dueDate').val();
+        let dueTime = $('#dueTime').val();
+
+
+        let startDateTime = new Date(startDate + ' ' + startTime); // Combine start date and time
+        let endDateTime = new Date(dueDate + ' ' + dueTime); // Combine due date and time
+
+
+        // Send task details to the server
+        $.ajax({
+          type: 'POST',
+          url: '/add-task',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            username: '{{username}}',
+            title: title,
+            start: startDateTime,
+            end: endDateTime,
+            length: duration // Include task-specific field
+          }),
+          success: function (response) {
+            // Handle success response if needed
+            console.log('Task added successfully:', response);
+            // Refresh the calendar or any other action you need
+            // Update the task list with the newly added task
+            $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
+
+
+            fetchAndDisplayTasks();
+          },
+          error: function (xhr, status, error) {
+            // Handle error response if needed
+            console.error('Error adding task:', error);
+          }
+        });
 
 
         // Clear the input fields
@@ -253,12 +301,20 @@
         var startTime = $('#firstTime').val();
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
-        var color = $('#color').val(); 
+        var color = $('#color').val();
         var startDateTime = new Date(startDate + ' ' + startTime);
-        var endDateTime = new Date(dueDate + ' ' + dueTime);
-        
-        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '') {
-          $('#TimeError').text('Please fill out all fields.');
+        var endDateTime = new Date(endDate + ' ' + endTime);
+        var monday = $('#monday').is(':checked');
+        var tuesday = $('#tuesday').is(':checked');
+        var wednesday = $('#wednesday').is(':checked');
+        var thursday = $('#thursday').is(':checked');
+        var friday = $('#friday').is(':checked');
+        var saturday = $('#saturday').is(':checked');
+        var sunday = $('#sunday').is(':checked');
+        var recurEndDate = $('#recurEndDate').val();
+        // Check if any field is empty
+        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '' ) {
+          $('#TimeError').text('Please fill out all fields.'); // Welll, it's not really alll fields is it?
           return false;
         }
         if (endDateTime <= startDateTime) {
@@ -266,9 +322,24 @@
           return false;
         }
         if (title.length > 45) {
-        $('#TimeError').text('Title must be under 45 characters.');
-        return false;
+          $('#TimeError').text('Event name must be under 45 characters.');
+          return false;
         }
+
+        // Check if checkboxes any checkboxes are checked while the end date is empty
+        if ((monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate === '') {
+          $('#TimeError').text('Please enter an end date for recurring events.');
+          return false;
+        }
+
+        // Check to see if end date is full but no checkboxes are checked
+        if (!(monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate !== '') {
+          $('#TimeError').text('Please select at least one day of the week for recurring events.');
+          return false;
+        }
+
+        // Clear the error message if all fields are valid
+        $('#TimeError').text('');
         return true;
       };
 
@@ -283,13 +354,13 @@
         var start = new Date(startDate + ' ' + startTime);
         start.setHours(start.getHours() - 4); // Subtract 4 hours
         console.log(start.toISOString()); // Convert to ISO string
-        
+
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var end = new Date(endDate + ' ' + endTime);
         end.setHours(end.getHours() - 4); // Subtract 4 hours
         console.log(end.toISOString()); // Convert to ISO string  
-        
+
         var color = $('#color').val();
 
         var recurEndDate = $('#recurEndDate').val();
@@ -779,7 +850,8 @@
         <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Add Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
-        <p>If you want to create recurring events with more details, you can add those events in the left sidebar as well.</p>
+        <p>If you want to create recurring events with more details, you can add those events in the left sidebar as
+          well.</p>
       </div>
       <div class="tutorial-step" id="step7">
         <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can
