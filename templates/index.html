@@ -192,11 +192,9 @@
         var dueDate = $('#dueDate').val();
         var dueTime = $('#dueTime').val();
 
-        console.log("in validateTaskFields")
 
-        // Check if the duration is a positive integer
-        if (isNaN(duration) || duration <= 0 || duration % 1 !== 0) {
-          $('#durationError').text('Duration must be a positive integer.');
+        if (isNaN(duration) || duration <= 0) {
+          $('#durationError').text('Duration must be a positive number.');
           return false;
         }
 
@@ -206,10 +204,7 @@
           $('#durationError').text('Please fill out all fields.');
           return false;
         }
-        if (isNaN(duration) || duration <= 0) {
-          $('#durationError').text('Duration must be a positive number.');
-          return false;
-        }
+
 
         // Check if due date is after start date
         var startDateTime = new Date(startDate + ' ' + startTime);
@@ -219,23 +214,11 @@
           return false;
         }
 
-        // Check to see if the task is longer than the time between the start and end date
-        var timeDifference = endDateTime - startDateTime;
-        var hoursDifference = timeDifference / (1000 * 3600);
-        if (hoursDifference < duration) {
-          $('#durationError').text('Task duration is longer than the time between start and end date.');
-          return false;
-        }
-        // Check if the title is too long
-        if (title.length > 45) {
-          $('#durationError').text('Task name must be under 45 characters.');
-          return false;
-        }
 
-        // Clear the error message if all fields are valid
         $('#durationError').text('');
         return true;
       }
+
 
       // Function to add task
       function addTask() {
@@ -287,60 +270,25 @@
 
 
         // Clear the input fields
-        $('#taskName').val('');
-        $('#duration').val('');
-        $('#startDate').val('');
-        $('#startTime').val('');
-        $('#dueDate').val('');
-        $('#dueTime').val('');
+        //$('#taskName').val('');
+        //$('#duration').val('');
+        //$('#startDate').val('');
+        //$('#startTime').val('');
+        //$('#dueDate').val('');
+        //$('#dueTime').val('');
       }
 
       function validateEventFields() {
         var title = $('#eventName').val();
-        var startDate = $('#firstDate').val();
-        var startTime = $('#firstTime').val();
+        var startDate = $('#startDate').val();
+        var startTime = $('#startTime').val();
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var color = $('#color').val();
-        var startDateTime = new Date(startDate + ' ' + startTime);
-        var endDateTime = new Date(endDate + ' ' + endTime);
-        var monday = $('#monday').is(':checked');
-        var tuesday = $('#tuesday').is(':checked');
-        var wednesday = $('#wednesday').is(':checked');
-        var thursday = $('#thursday').is(':checked');
-        var friday = $('#friday').is(':checked');
-        var saturday = $('#saturday').is(':checked');
-        var sunday = $('#sunday').is(':checked');
-        var recurEndDate = $('#recurEndDate').val();
-        // Check if any field is empty
-        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '' ) {
-          $('#TimeError').text('Please fill out all fields.'); // Welll, it's not really alll fields is it?
-          return false;
-        }
-        if (endDateTime <= startDateTime) {
-          $('#TimeError').text('End date must be after start date.');
-          return false;
-        }
-        if (title.length > 45) {
-          $('#TimeError').text('Event name must be under 45 characters.');
-          return false;
-        }
 
-        // Check if checkboxes any checkboxes are checked while the end date is empty
-        if ((monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate === '') {
-          $('#TimeError').text('Please enter an end date for recurring events.');
-          return false;
-        }
 
-        // Check to see if end date is full but no checkboxes are checked
-        if (!(monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate !== '') {
-          $('#TimeError').text('Please select at least one day of the week for recurring events.');
-          return false;
-        }
-
-        // Clear the error message if all fields are valid
-        $('#TimeError').text('');
         return true;
+
       };
 
       function addEvent() {
@@ -354,13 +302,13 @@
         var start = new Date(startDate + ' ' + startTime);
         start.setHours(start.getHours() - 4); // Subtract 4 hours
         console.log(start.toISOString()); // Convert to ISO string
-
+        
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var end = new Date(endDate + ' ' + endTime);
         end.setHours(end.getHours() - 4); // Subtract 4 hours
-        console.log(end.toISOString()); // Convert to ISO string  
-
+        console.log(end.toISOString()); // Convert to ISO string
+        
         var color = $('#color').val();
 
         var recurEndDate = $('#recurEndDate').val();
@@ -826,8 +774,6 @@
 
     <button id="addEventButton">Create Event</button>
     <br><br>
-    <span id="TimeError" style="color: red;"></span> <!-- Display error message here -->
-
 
 
   </div>
@@ -847,11 +793,10 @@
         <p>You can also hold and drag in the Day view to add events at specific times.</p>
       </div>
       <div class="tutorial-step" id="step5">
-        <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Add Task button.</p>
+        <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Create Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
-        <p>If you want to create recurring events with more details, you can add those events in the left sidebar as
-          well.</p>
+        <p>If you want to create recurring events with more details, you can create those events in the left sidebar as well.</p>
       </div>
       <div class="tutorial-step" id="step7">
         <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can

@@ -18,7 +18,7 @@ class time_slot:
 
 
 def split_tasks(user_id, title, start, end, length, task_id):
-    
+    events = database.getEvents(user_id, [start, end])
     whentostart = start
     whenisitdue = end
     print(start)
@@ -28,8 +28,6 @@ def split_tasks(user_id, title, start, end, length, task_id):
     # Convert datetime objects back to strings
     whentostart_str = whentostart.strftime("%Y-%m-%dT%H:%M:%S.000Z")
     whenisitdue_str = whenisitdue.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-
-    events = database.getEvents(user_id, [whentostart, whenisitdue])
 
     events.insert(0, {'start': whentostart_str, 'end': whentostart_str})
     events.append({'start': whenisitdue_str, 'end': whenisitdue_str})

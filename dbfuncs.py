@@ -40,7 +40,6 @@ def get_user_id(username):
 
 # ----------------------------------------------------------------------
 
-          
 def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
