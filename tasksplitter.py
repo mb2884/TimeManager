@@ -22,7 +22,7 @@ event_padding = 10 # minutes
 nytz = pytz.timezone('America/New_York')
 utc = pytz.UTC
 
-# Example event: {'title': 'test', 'start': '2024-04-29T16:00:00', 'end': '2024-04-29T17:00:00', 'allDay': False, 'id': 575, 'parentTaskID': None, 'color': '#008080', 'daysOfWeek': [0, 2, 4, 5], 'startRecur': '2024-04-29T16:00:00', 'endRecur': '2024-05-10T00:00:00', 'startTime': '16:00:00', 'endTime': '17:00:00'}
+# ----------------------------------------------------------------------
 def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
     # Get all events from the database that overlap with the task
     events = [event for event in calendar_events if not event['allDay'] and parser.parse(event['start']).replace(tzinfo=nytz) < end.replace(tzinfo=nytz) and parser.parse(event['end']).replace(tzinfo=nytz) > start.replace(tzinfo=nytz)]
@@ -57,8 +57,7 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
     while time_left_in_task > 0:
         if k > len(event_times):
             print("Not enough time to schedule task")
-            database.delete_task(task_id)
-            break
+            raise Exception("Not enough time to schedule task")
         if time_left_in_task <= 0:
             print("Task scheduled")
             break

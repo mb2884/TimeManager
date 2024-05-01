@@ -107,7 +107,11 @@ def add_task():
 
 
    task_id = database.addTask(user_id, title, start, end, length)
-   tasksplitter.split_tasks(user_id, title, start, end, length, task_id, events)
+   try:
+       tasksplitter.split_tasks(user_id, title, start, end, length, task_id, events)
+   except Exception as ex:
+         database.delete_task(task_id)
+         return jsonify({'error': str(ex)}), 500
    return jsonify({'id': task_id})
 
 

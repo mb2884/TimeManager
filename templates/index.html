@@ -295,6 +295,8 @@
           error: function (xhr, status, error) {
             // Handle error response if needed
             console.error('Error adding task:', error);
+            fetchAndDisplayTasks();
+            alert(JSON.parse(xhr.responseText).error);
           }
         });
 
