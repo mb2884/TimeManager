@@ -21,13 +21,15 @@ nytz = pytz.timezone('America/New_York')
 
 # ----------------------------------------------------------------------
 
+
 def get_user_id(username):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             # Query the AppUser object from the database
-            app_user = session.query(database.AppUser).filter_by(username=username).first()
+            app_user = session.query(database.AppUser).filter_by(
+                username=username).first()
 
             if app_user:
                 return app_user.id
@@ -49,6 +51,7 @@ def get_user_id(username):
 
 # ----------------------------------------------------------------------
 
+
 def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -60,7 +63,8 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
                 days_of_week = None
                 start_recur = None
                 end_recur = None
-            print("Event info: ", user_id, title, start_time, end_time, all_day, parent_task_id, color, days_of_week, start_recur, end_recur)
+            print("Event info: ", user_id, title, start_time, end_time, all_day,
+                  parent_task_id, color, days_of_week, start_recur, end_recur)
             app_event = database.AppEvent(
                 user_id=user_id,
                 title=title,
@@ -83,6 +87,7 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
 
 # ----------------------------------------------------------------------
 
+
 def addTask(user_id, title, start_time, due_date, est_length):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -93,7 +98,7 @@ def addTask(user_id, title, start_time, due_date, est_length):
                 title=title,
                 start_time=start_time,
                 due_date=due_date,
-                est_length = est_length
+                est_length=est_length
             )
             session.add(app_task)
             session.commit()
@@ -105,6 +110,7 @@ def addTask(user_id, title, start_time, due_date, est_length):
 
 # ----------------------------------------------------------------------
 
+
 def getEvents(user_id, filter_by_date=None):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -112,9 +118,11 @@ def getEvents(user_id, filter_by_date=None):
         with sqlalchemy.orm.Session(engine) as session:
 
             if filter_by_date:
-                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).filter(database.AppEvent.start_time >= filter_by_date[0]).filter(database.AppEvent.end_time <= filter_by_date[1]).order_by(database.AppEvent.start_time).all()
+                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).filter(database.AppEvent.start_time >= filter_by_date[0]).filter(
+                    database.AppEvent.end_time <= filter_by_date[1]).order_by(database.AppEvent.start_time).all()
             else:
-                app_events = session.query(database.AppEvent).filter_by(user_id=user_id).all()
+                app_events = session.query(
+                    database.AppEvent).filter_by(user_id=user_id).all()
 
             # Convert each AppEvent object into a dictionary
             event_dicts = []
@@ -135,7 +143,7 @@ def getEvents(user_id, filter_by_date=None):
                     # Takes just the time from the datetime object
                     start_time = event.start_time.time().isoformat()
                     end_time = event.end_time.time().isoformat()
-                    
+
                 event_dict = {
                     'title': event.title,
                     'start': event.start_time.isoformat(),  # Convert datetime to ISO format
@@ -149,7 +157,7 @@ def getEvents(user_id, filter_by_date=None):
                     'endRecur': end_recur,
                     'startTime': start_time,
                     'endTime': end_time
-                    
+
                 }
                 event_dicts.append(event_dict)
 
@@ -161,21 +169,25 @@ def getEvents(user_id, filter_by_date=None):
 
 # ----------------------------------------------------------------------
 
+
 def getTasks(user_id):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             # Query all AppEvent objects from the database
-            app_tasks = session.query(database.AppTask).filter_by(user_id=user_id).all()
+            app_tasks = session.query(
+                database.AppTask).filter_by(user_id=user_id).all()
 
             # Convert each AppEvent object into a dictionary
             task_dicts = []
             for task in app_tasks:
                 task_dict = {
                     'title': task.title,
-                    'start': task.start_time.isoformat() if task.start_time else None,  # Convert datetime to ISO format
-                    'end': task.due_date.isoformat() if task.due_date else None,  # Convert datetime to ISO format
+                    # Convert datetime to ISO format
+                    'start': task.start_time.isoformat() if task.start_time else None,
+                    # Convert datetime to ISO format
+                    'end': task.due_date.isoformat() if task.due_date else None,
                     'length': task.est_length,
                     'id': task.id
                 }
@@ -187,7 +199,7 @@ def getTasks(user_id):
         sys.exit(1)
 
 
-#-----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 
 
 def delete_event(event_id):
@@ -213,6 +225,7 @@ def delete_event(event_id):
 
 # ----------------------------------------------------------------------
 
+
 def delete_task(task_id):
     print(f"Deleting task with ID {task_id}...")
     try:
@@ -233,6 +246,7 @@ def delete_task(task_id):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+
 
 def update_event(event_id, title, start, end, all_day):
     try:
@@ -256,14 +270,16 @@ def update_event(event_id, title, start, end, all_day):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
-        
+
+
 def get_user_settings(user_id):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
             # Query the AppUser object from the database
-            app_user = session.query(database.AppUser).filter_by(id=user_id).first()
+            app_user = session.query(
+                database.AppUser).filter_by(id=user_id).first()
 
             if app_user:
                 return app_user.earliest_time, app_user.latest_time, app_user.ideal_chunk_size, app_user.event_padding
@@ -273,7 +289,8 @@ def get_user_settings(user_id):
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
-        
+
+
 def update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, event_padding):
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -290,7 +307,8 @@ def update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, 
                 user_settings_to_update.ideal_chunk_size = ideal_chunk_size
                 user_settings_to_update.event_padding = event_padding
                 session.commit()
-                print(f"User settings for user with ID {user_id} updated successfully.")
+                print(
+                    f"User settings for user with ID {user_id} updated successfully.")
             else:
                 print(f"User settings for user with ID {user_id} not found.")
     except Exception as ex:

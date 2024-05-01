@@ -390,6 +390,9 @@
         var color = $('#color').val();
 
         var recurEndDate = $('#recurEndDate').val();
+        var date = new Date(recurEndDate);
+        date.setDate(date.getDate() + 1);
+        recurEndDate = date.toISOString().split('T')[0];
 
         var sunday = $('#sunday').is(':checked');
         var monday = $('#monday').is(':checked');
@@ -707,10 +710,10 @@
       if (settings.style.display === 'none' || settings.style.display === '') {
         $('#settings').addClass('red');
         settings.style.display = 'block';
-          $('#settingsMenu').removeClass('slideRight');
-          $('#settingsMenu').addClass('slideLeft');
-          $('#dynamicText').addClass('slideDown');
-          $('#dynamicText').removeClass('slideUp');
+        $('#settingsMenu').removeClass('slideRight');
+        $('#settingsMenu').addClass('slideLeft');
+        $('#dynamicText').addClass('slideDown');
+        $('#dynamicText').removeClass('slideUp');
       } else {
         $('#settings').removeClass('red');
         $('#settingsMenu').removeClass('slideLeft');
@@ -725,7 +728,7 @@
         }, 400); // Adjust timeout to match transition duration
       }
     }
-    
+
 
     function validateSettings() {
       var earliestTime = $('#earliestTime').val();

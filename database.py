@@ -10,6 +10,7 @@ import sqlalchemy
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
+
 class AppUser(Base):
     __tablename__ = 'app_user'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
@@ -50,6 +51,3 @@ class AppTask(Base):
     start_time = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     due_date = sqlalchemy.Column(sqlalchemy.TIMESTAMP)
     est_length = sqlalchemy.Column(sqlalchemy.REAL)
-
-
-

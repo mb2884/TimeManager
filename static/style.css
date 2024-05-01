@@ -19,16 +19,22 @@ body {
   background-color: #f4f4f4;
   padding: 20px;
   box-sizing: border-box;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
 }
 
 .sidebarleft input {
   margin-bottom: 10px;
-  width: 100%; /* Adjust input width */
-  padding: 8px; /* Adjust input padding */
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 5px; /* Add border radius */
-  box-sizing: border-box; /* Adjust box-sizing */
+  width: 100%;
+  /* Adjust input width */
+  padding: 8px;
+  /* Adjust input padding */
+  border: 1px solid #ccc;
+  /* Add border */
+  border-radius: 5px;
+  /* Add border radius */
+  box-sizing: border-box;
+  /* Adjust box-sizing */
 }
 
 .sidebarleft label {
@@ -42,8 +48,10 @@ body {
   margin-bottom: 10px;
 }
 
-#addTaskButton, #addEventButton {
-  background-color: #4CAF50; /* Green */
+#addTaskButton,
+#addEventButton {
+  background-color: #4CAF50;
+  /* Green */
   border: none;
   color: white;
   padding: 10px 20px;
@@ -53,24 +61,31 @@ body {
   font-size: 16px;
   margin-bottom: 10px;
   cursor: pointer;
-  border-radius: 5px; /* Add border radius */
+  border-radius: 5px;
+  /* Add border radius */
 }
 
-#addTaskButton:hover, #addEventButton:hover {
-  background-color: #45a049; /* Darker Green */
+#addTaskButton:hover,
+#addEventButton:hover {
+  background-color: #45a049;
+  /* Darker Green */
 }
 
 .taskList {
   list-style-type: none;
   padding: 0;
-  margin: 0; /* Remove default margin */
-  max-height: calc(100% - 140px); /* Limit maximum height of task list to allow space for other elements */
-  overflow-y: auto; /* Enable vertical scrolling for task list */
+  margin: 0;
+  /* Remove default margin */
+  max-height: calc(100% - 140px);
+  /* Limit maximum height of task list to allow space for other elements */
+  overflow-y: auto;
+  /* Enable vertical scrolling for task list */
 }
 
 .taskList li {
   margin-bottom: 10px;
-  padding: 5px 0; /* Add padding to task list items */
+  padding: 5px 0;
+  /* Add padding to task list items */
 }
 
 .taskList li a {
@@ -81,7 +96,8 @@ body {
 
 .taskList li a:hover {
   color: darkred;
-  text-decoration: none; /* Remove underlining on hover */
+  text-decoration: none;
+  /* Remove underlining on hover */
 }
 
 .sidebarright {
@@ -93,7 +109,8 @@ body {
   background-color: #f4f4f4;
   padding: 20px;
   box-sizing: border-box;
-  font-size: 2em; /* Adjust font size */
+  font-size: 2em;
+  /* Adjust font size */
 }
 
 
@@ -116,32 +133,47 @@ button:hover {
 
 /* Customize the calendar header */
 .fc-header-toolbar {
-  background-color: #f0f0f0; /* Set header background color */
-  border-radius: 8px 8px 0 0; /* Add border radius */
+  background-color: #f4f4f4;
+  /* Set header background color */
+  border-radius: 8px 8px 0 0;
+  /* Add border radius */
 }
 
+
 .fc-header-toolbar h2 {
-  font-size: 18px; /* Adjust font size */
-  margin: 0; /* Remove default margin */
-  padding: 10px; /* Add padding */
+  font-size: 18px;
+  /* Adjust font size */
+  margin: 0;
+  /* Remove default margin */
+  padding: 10px;
+  /* Add padding */
 }
 
 /* Customize the buttons in the calendar header */
 .fc-header-toolbar button {
-  background-color: transparent; /* Set button background color */
-  color: #333; /* Set button text color */
-  border: none; /* Remove button border */
-  font-size: 14px; /* Adjust font size */
-  padding: 5px 10px; /* Add padding */
+  background-color: transparent;
+  /* Set button background color */
+  color: #333;
+  /* Set button text color */
+  border: none;
+  /* Remove button border */
+  font-size: 14px;
+  /* Adjust font size */
+  padding: 5px 10px;
+  /* Add padding */
 }
 
 /* Customize the calendar events */
 .fc-event {
   /* background-color: #007bff; Set event background color */
-  color: #fff; /* Set event text color */
-  border: none; /* Remove event border */
-  border-radius: 4px; /* Add border radius */
-  padding: 4px 8px; /* Add padding */
+  color: #fff;
+  /* Set event text color */
+  border: none;
+  /* Remove event border */
+  border-radius: 4px;
+  /* Add border radius */
+  padding: 4px 8px;
+  /* Add padding */
 }
 
 
@@ -153,23 +185,36 @@ button:hover {
 .wrapper {
   position: fixed;
   top: 0;
-  left: 20%; /* Adjust according to the width of the left sidebar */
-  right: 20%; /* Adjust according to the width of the right sidebar */
-  padding: 10px 100px 20px; /* Horizontal padding to match the padding in the tutorial container */
+  left: 20%;
+  /* Adjust according to the width of the left sidebar */
+  right: 20%;
+  /* Adjust according to the width of the right sidebar */
+  padding: 10px 100px 20px;
+  /* Horizontal padding to match the padding in the tutorial container */
 }
 
 .tutorial-container {
-  background-color: #006400; /* Dark green background */
-  color: #ffffff; /* White text color */
+  background-color: #006400;
+  /* Dark green background */
+  color: #ffffff;
+  /* White text color */
   padding: 20px 20px 20px 20px;
-  border-radius: 8px; /* Add border radius */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  max-width: calc(100% - 40px); /* Set a maximum width */
-  max-height: calc(100vh - 320px); /* Adjust the maximum height as needed */
-  margin-left: auto; /* Center the container horizontally */
-  margin-right: auto; /* Center the container horizontally */
-  font-size: 16px; /* Adjust font size */
-  overflow-y: auto; /* Enable vertical scrolling */
+  border-radius: 8px;
+  /* Add border radius */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Add a subtle shadow */
+  max-width: calc(100% - 40px);
+  /* Set a maximum width */
+  max-height: calc(100vh - 320px);
+  /* Adjust the maximum height as needed */
+  margin-left: auto;
+  /* Center the container horizontally */
+  margin-right: auto;
+  /* Center the container horizontally */
+  font-size: 16px;
+  /* Adjust font size */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
   margin-top: 40px;
   margin-bottom: 20px;
 }
@@ -180,15 +225,16 @@ button:hover {
 
 .tutorial-step {
   display: none;
-  height: 100px; /* Set a fixed height */
+  height: 100px;
+  /* Set a fixed height */
 }
 
 .box {
   display: flex;
   justify-content: space-between;
 
-  flex-wrap:wrap;
-  flex-direction:row;
+  flex-wrap: wrap;
+  flex-direction: row;
 }
 
 .color-input-container {
@@ -217,7 +263,7 @@ button:hover {
   cursor: pointer;
 }
 
-.toprightcont{
+.toprightcont {
   display: flex;
   justify-content: space-around;
 }
@@ -235,6 +281,7 @@ button:hover {
     transform: translateX(100%);
     opacity: 0;
   }
+
   100% {
     transform: translateX(0);
     opacity: 1;
@@ -269,7 +316,7 @@ button:hover {
   margin-bottom: 10px;
   cursor: pointer;
   border-radius: 5px;
-  margin-left: auto; 
+  margin-left: auto;
   margin-right: 0;
 }
 
@@ -294,6 +341,7 @@ button:hover {
     transform: translateX(0);
     opacity: 1;
   }
+
   100% {
     transform: translateX(100%);
     opacity: 0;
@@ -305,6 +353,7 @@ button:hover {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -316,6 +365,7 @@ button:hover {
     transform: translateY(0);
     opacity: 1;
   }
+
   100% {
     transform: translateY(-100%);
     opacity: 0;
