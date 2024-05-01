@@ -19,8 +19,18 @@ class time_slot:
 
 def split_tasks(user_id, title, start, end, length, task_id):
     events = database.getEvents(user_id, [start, end])
-    events.insert(0, {'start': start, 'end': start})
-    events.append({'start': end, 'end': end})
+    whentostart = start
+    whenisitdue = end
+    print(start)
+    print(end)
+    whentostart = parser.parse(whentostart).replace(tzinfo=None) - datetime.timedelta(hours=4)
+    whenisitdue = parser.parse(whenisitdue).replace(tzinfo=None) - datetime.timedelta(hours=4)
+    # Convert datetime objects back to strings
+    whentostart_str = whentostart.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    whenisitdue_str = whenisitdue.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+    events.insert(0, {'start': whentostart_str, 'end': whentostart_str})
+    events.append({'start': whenisitdue_str, 'end': whenisitdue_str})
     
     length = int(length)
     num_new_events = length * 2 # Assuming 30 minute chunks
