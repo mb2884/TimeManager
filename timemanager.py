@@ -142,9 +142,11 @@ def save_settings():
        latest_time = data.get('latestTime')
        ideal_chunk_size = data.get('idealChunkSize')
        event_padding = data.get('eventPadding')
-      
+       
+       user_id = database.get_user_id(username)
+       
        # Update the event in the database
-       database.update_user_settings(username, earliest_time, latest_time, ideal_chunk_size, event_padding)
+       database.update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, event_padding)
       
        return jsonify({'message': 'Settings saved successfully'})
    except Exception as ex:
