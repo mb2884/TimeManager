@@ -504,6 +504,29 @@
       function showStep(index) {
         steps.forEach(function (step, i) {
           step.style.display = i === index ? "block" : "none";
+          switch (index) {
+            case 1:
+              $('.fc-button-primary').addClass('attention-element');
+              calendar.changeView('dayGridMonth');
+              break;
+            case 2:
+              $('.fc-button-primary').removeClass('attention-element');
+              calendar.changeView('timeGridWeek');
+              calendar.today();
+              break;
+            case 4:
+              $("#addTaskButton").addClass('attention-element');
+              break;
+            
+            case 5:
+              $("#addTaskButton").removeClass('attention-element');
+              $('#eventAdder').addClass('attention-element');
+              break;
+            case 6:
+            $('#eventAdder').removeClass('attention-element');
+            $('#taskTitle').addClass('attention-element');
+              break;
+          }
         });
       }
 
@@ -518,6 +541,7 @@
             showStep(currentStepIndex);
           } else {
             // If there are no more steps, hide the tutorial and mark it as completed
+            $('#taskTitle').removeClass('attention-element');
             document.getElementById("tutorial").style.display = "none";
             localStorage.setItem("tutorialCompleted", "true");
             // show the run tutorial link
@@ -884,7 +908,7 @@
     <span id="durationError" style="color: red;"></span> <!-- Display error message here -->
 
 
-    <h2>Tasks</h2>
+    <h2 id="taskTitle">Tasks</h2>
     <ul id="taskList"></ul>
   </div>
 
@@ -959,20 +983,20 @@
     <div id="settingsMenu" style="display: none;">
       <h2>Settings</h2>
 
-      <label for="earliestTime">Earliest time to start on tasks:</label>
+      <label for="earliestTime">Start tasks no earlier than:</label>
       <input class="input" type="time" id="earliestTime" value="{{work_start_time}}">
       <br>
 
-      <label for="latestTime">Latest time to work on tasks:</label>
+      <label for="latestTime">Finish tasks by:</label>
       <input class="input" type="time" id="latestTime" value="{{work_end_time}}">
       <br>
 
-      <label for="idealChunkSize">Ideal task chunk size (minutes):</label>
+      <label for="idealChunkSize">How long should each work session be (in minutes)?:</label>
       <input class="input" type="number" id="idealChunkSize" placeholder="Enter duration" min="1"
         value="{{ideal_chunk_length}}">
       <br>
 
-      <label for="eventPadding">Event padding (minutes):</label>
+      <label for="eventPadding">How much padding between events (in minutes)?:</label>
       <input class="input" type="number" id="eventPadding" placeholder="Enter padding" min="0"
         value="{{event_padding}}">
       <br>
@@ -993,17 +1017,17 @@
         <p>Toggle your calendar view with the Month/Week/Day options.</p>
       </div>
       <div class="tutorial-step" id="step3">
-        <p>Click on any day in the calendar to add an event to block out your schedule.</p>
+        <p>Click on any day in the calendar in the Month view to add an event to block out your schedule.</p>
       </div>
       <div class="tutorial-step" id="step4">
-        <p>You can also hold and drag in the Day view to add events at specific times.</p>
+        <p>You can also hold and drag in the Week/Day view to add events at specific times.</p>
       </div>
       <div class="tutorial-step" id="step5">
         <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Create Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
         <p>If you want to create recurring events with more details, you can create those events in the left sidebar as
-          well.</p>
+          well. Just toggle between adding tasks and events with the blue Add Task/Event button.</p>
       </div>
       <div class="tutorial-step" id="step7">
         <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can

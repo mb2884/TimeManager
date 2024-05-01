@@ -379,3 +379,14 @@ button:hover {
 .slideUp {
   animation: slideUp 0.5s ease;
 }
+
+@keyframes attention {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Apply Animation to Element */
+.attention-element {
+  animation: attention 1s infinite; /* Change duration and other properties as needed */
+}
