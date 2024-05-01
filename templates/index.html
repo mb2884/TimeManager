@@ -53,6 +53,7 @@
               },
               error: function (xhr, status, error) {
                 console.error(error); // Log error message
+                refreshCalendar();
                 // Handle errors and provide feedback to the user
               }
             });
@@ -96,6 +97,7 @@
               error: function (xhr, status, error) {
                 alert('There was an error processing your request. Please try again.');
                 console.error(error);
+                refreshCalendar();
               }
             };
             $.ajax(requestData);
@@ -116,9 +118,11 @@
               title: arg.event.title
             }),
             success: function (response) {
+              refreshCalendar();
               console.log(response); // Log success message
             },
             error: function (xhr, status, error) {
+              refreshCalendar();
               console.error(error); // Log error message
               // Handle errors and provide feedback to the user
             }
@@ -138,9 +142,11 @@
               title: arg.event.title
             }),
             success: function (response) {
+              refreshCalendar();
               console.log(response); // Log success message
             },
             error: function (xhr, status, error) {
+              refreshCalendar();
               console.error(error); // Log error message
               // Handle errors and provide feedback to the user
             }
@@ -159,15 +165,17 @@
         success: function (response) {
           // Add events to the calendar
           calendar.addEventSource(response);
+          refreshCalendar();
         },
         error: function (xhr, status, error) {
           console.error(error);
+          refreshCalendar();
           // Handle errors and provide feedback to the user
         }
       });
 
 
-      setInterval(refreshCalendar, 1000);
+      // setInterval(refreshCalendar, 1000);
 
       // Define refreshCalendar function
       function refreshCalendar() {
@@ -288,6 +296,7 @@
             // Refresh the calendar or any other action you need
             // Update the task list with the newly added task
             $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
+            refreshCalendar();
 
 
             fetchAndDisplayTasks();
@@ -297,6 +306,7 @@
             console.error('Error adding task:', error);
             fetchAndDisplayTasks();
             alert(JSON.parse(xhr.responseText).error);
+            refreshCalendar();
           }
         });
 
@@ -439,6 +449,7 @@
           error: function (xhr, status, error) {
             alert('There was an error processing your request. Please try again.');
             console.error(error);
+            refreshCalendar();
           }
         };
         console.log(requestData);
@@ -547,10 +558,12 @@
 
             // Append the list item to the task list
             $('#taskList').append(listItemHtml);
+            refreshCalendar();
           });
         },
         error: function (xhr, status, error) {
           console.error(error);
+          refreshCalendar();
           // Handle errors and provide feedback to the user
         }
       });
@@ -577,9 +590,11 @@
           console.log(response); // Log success message
           // Remove the task from the task list
           listItem.remove(); // Remove the parent <li> element
+          refreshCalendar();
         },
         error: function (xhr, status, error) {
           console.error(error); // Log error message
+          refreshCalendar();
           // Handle errors and provide feedback to the user
         }
       });
@@ -731,7 +746,7 @@
       var latestTime = $('#latestTime').val();
       var idealChunkSize = $('#idealChunkSize').val();
       var eventPadding = $('#eventPadding').val();
-    
+
       var requestData = {
         type: 'POST',
         url: '/save-settings',
@@ -745,18 +760,20 @@
         }),
         success: function (response) {
           console.log(response); // Log success message
+          refreshCalendar();
         },
         error: function (xhr, status, error) {
           alert("Could not save settings. Please try again.");
           console.error(error);
+          refreshCalendar();
         }
       };
-    
+
       console.log(requestData);
       $.ajax(requestData);
     }
 
-    
+
     function logout() {
       // Call the logout route when the button is clicked
       $.ajax({
@@ -933,11 +950,13 @@
       <br>
 
       <label for="idealChunkSize">Ideal task chunk size (minutes):</label>
-      <input class="input" type="number" id="idealChunkSize" placeholder="Enter duration" min="1" value="{{ideal_chunk_length}}">
+      <input class="input" type="number" id="idealChunkSize" placeholder="Enter duration" min="1"
+        value="{{ideal_chunk_length}}">
       <br>
 
       <label for="eventPadding">Event padding (minutes):</label>
-      <input class="input" type="number" id="eventPadding" placeholder="Enter padding" min="0" value="{{event_padding}}">
+      <input class="input" type="number" id="eventPadding" placeholder="Enter padding" min="0"
+        value="{{event_padding}}">
       <br>
 
       <button onclick="saveSettings()" id="saveSettingsButton">Save</button>
