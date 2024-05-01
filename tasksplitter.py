@@ -13,17 +13,20 @@ import pytz
 # ----------------------------------------------------------------------
 # Constants
 
-work_start_time = 8 # 8am
-work_end_time = 22 # 10pm
+# work_start_time = 8 # 8am
+# work_end_time = 22 # 10pm
 
-ideal_chunk_length = 120 # minutes
-event_padding = 10 # minutes
+# ideal_chunk_length = 120 # minutes
+# event_padding = 10 # minutes
 
 nytz = pytz.timezone('America/New_York')
-utc = pytz.UTC
 
 # ----------------------------------------------------------------------
 def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
+    work_start_time, work_end_time, ideal_chunk_length, event_padding = database.get_user_settings(user_id)
+    print("User settings: ", work_start_time, work_end_time, ideal_chunk_length, event_padding)
+    
+    
     # Get all events from the database that overlap with the task
     events = [event for event in calendar_events if not event['allDay'] and parser.parse(event['start']).replace(tzinfo=nytz) < end.replace(tzinfo=nytz) and parser.parse(event['end']).replace(tzinfo=nytz) > start.replace(tzinfo=nytz)]
     # Caluclate for each day in between start and end the amount of time of events and store in a dictionary

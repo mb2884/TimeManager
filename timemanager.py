@@ -131,6 +131,24 @@ def update_event():
        return jsonify({'message': 'Event updated successfully'})
    except Exception as ex:
        return jsonify({'error': str(ex)}), 500
+   
+   
+@app.route('/save-settings', methods=['POST'])
+def save_settings():
+   try:
+       data = request.get_json()
+       username = data.get('username')
+       earliest_time = data.get('earliestTime')
+       latest_time = data.get('latestTime')
+       ideal_chunk_size = data.get('idealChunkSize')
+       event_padding = data.get('eventPadding')
+      
+       # Update the event in the database
+       database.update_user_settings(username, earliest_time, latest_time, ideal_chunk_size, event_padding)
+      
+       return jsonify({'message': 'Settings saved successfully'})
+   except Exception as ex:
+       return jsonify({'error': str(ex)}), 500
 
 
 @app.route('/delete-event', methods=['POST'])
@@ -199,7 +217,13 @@ def landing():
 @app.route('/index', methods=['GET'])
 def index():
    username = auth.authenticate()
-   html_code = flask.render_template('index.html', username=username)
+   work_start_time, work_end_time, ideal_chunk_length, event_padding = database.get_user_settings(database.get_user_id(username))
+   html_code = flask.render_template('index.html',
+                                     username=username,
+                                     work_start_time=work_start_time,
+                                     work_end_time=work_end_time,
+                                     ideal_chunk_length=ideal_chunk_length,
+                                     event_padding=event_padding)
    response = flask.make_response(html_code)
    print(database.getEvents(database.get_user_id(username)))
    return response

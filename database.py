@@ -10,11 +10,14 @@ import sqlalchemy
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
-
 class AppUser(Base):
     __tablename__ = 'app_user'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     username = sqlalchemy.Column(sqlalchemy.Text)
+    earliest_time = sqlalchemy.Column(sqlalchemy.TIME)
+    latest_time = sqlalchemy.Column(sqlalchemy.TIME)
+    ideal_chunk_size = sqlalchemy.Column(sqlalchemy.Integer)
+    event_padding = sqlalchemy.Column(sqlalchemy.Integer)
 
 
 class AppEvent(Base):

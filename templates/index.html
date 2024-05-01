@@ -11,7 +11,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
-  <link href='static/style.css' rel='stylesheet' />
+  <link href='../static/style.css' rel='stylesheet' />
   <script>
 
 
@@ -328,7 +328,7 @@
         var sunday = $('#sunday').is(':checked');
         var recurEndDate = $('#recurEndDate').val();
         // Check if any field is empty
-        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '' ) {
+        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '') {
           $('#TimeError').text('Please fill out all fields.'); // Welll, it's not really alll fields is it?
           return false;
         }
@@ -366,7 +366,7 @@
         var title = $('#eventName').val();
         var startDate = $('#firstDate').val();
         var startTime = $('#firstTime').val();
-        
+
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
 
@@ -376,7 +376,7 @@
         var end = new Date(Date.parse(endDate + ' ' + endTime));
         end = end.toLocaleString('en-US', { timeZone: 'America/New_York' });
         console.log("end", end);
-        
+
         var color = $('#color').val();
 
         var recurEndDate = $('#recurEndDate').val();
@@ -687,7 +687,76 @@
       setInterval(updateText, 3000);
     });
 
+    function openSettings() {
+      var settings = document.getElementById("settingsMenu")
+      if (settings.style.display === 'none') {
+        settings.style.display = 'block';
+      } else {
+        settings.style.display = 'none';
+      }
 
+    }
+
+    function validateSettings() {
+      var earliestTime = $('#earliestTime').val();
+      var latestTime = $('#latestTime').val();
+      var idealChunkSize = $('#idealChunkSize').val();
+      var eventPadding = $('#eventPadding').val();
+      if (earliestTime === '' || latestTime === '' || idealChunkSize === '' || eventPadding === '') {
+        $('#settingsError').text('Please fill out all fields.');
+        return false;
+      }
+      if (earliestTime >= latestTime) {
+        $('#settingsError').text('Earliest time must be before latest time.');
+        return false;
+      }
+      if (idealChunkSize <= 0) {
+        $('#settingsError').text('Ideal chunk size must be a positive number.');
+        return false;
+      }
+      if (eventPadding < 0) {
+        $('#settingsError').text('Event padding must be a non-negative number.');
+        return false;
+      }
+
+      $('#settingsError').text('');
+      return true
+    }
+
+    function saveSettings() {
+      if (!validateSettings()) {
+        return;
+      }
+      var earliestTime = $('#earliestTime').val();
+      var latestTime = $('#latestTime').val();
+      var idealChunkSize = $('#idealChunkSize').val();
+      var eventPadding = $('#eventPadding').val();
+    
+      var requestData = {
+        type: 'POST',
+        url: '/save-settings',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          username: '{{username}}',
+          earliestTime: earliestTime,
+          latestTime: latestTime,
+          idealChunkSize: idealChunkSize,
+          eventPadding: eventPadding
+        }),
+        success: function (response) {
+          console.log(response); // Log success message
+        },
+        error: function (xhr, status, error) {
+          alert("Could not save settings. Please try again.");
+          console.error(error);
+        }
+      };
+    
+      console.log(requestData);
+      $.ajax(requestData);
+    }
+
+    
     function logout() {
       // Call the logout route when the button is clicked
       $.ajax({
@@ -809,7 +878,7 @@
 
 
     <div class="color-input-container">
-      <label for="color">Event Color:⠀⠀</label>
+      <label for="color">Event Color:</label>
       <input class="input" type="color" id="color" name="color">
       <!--<div class="color-preview" id="colorPreview"></div> -->
     </div>
@@ -847,6 +916,38 @@
   </div>
 
   <div class="sidebarright">
+    <div class="toprightcont">
+      <button onclick="openSettings()" id="settings">Settings</button>
+      <button onclick="logout()" id="logoutButton">Logout</button>
+    </div>
+
+    <div id="settingsMenu" style="display: none;">
+      <h2>Settings</h2>
+
+      <label for="earliestTime">Earliest time to start on tasks:</label>
+      <input class="input" type="time" id="earliestTime" value="{{work_start_time}}">
+      <br>
+
+      <label for="latestTime">Latest time to work on tasks:</label>
+      <input class="input" type="time" id="latestTime" value="{{work_end_time}}">
+      <br>
+
+      <label for="idealChunkSize">Ideal task chunk size (minutes):</label>
+      <input class="input" type="number" id="idealChunkSize" placeholder="Enter duration" min="1" value="{{ideal_chunk_length}}">
+      <br>
+
+      <label for="eventPadding">Event padding (minutes):</label>
+      <input class="input" type="number" id="eventPadding" placeholder="Enter padding" min="0" value="{{event_padding}}">
+      <br>
+
+      <button id="saveSettingsButton">Save</button>
+      <br><br>
+      <span id="settingsError" style="color: red;"></span>
+
+
+    </div>
+
+
     <div class="tutorial-container" id="tutorial">
       <div class="tutorial-step" id="step1">
         <p>Welcome to your Task Manager! Press Enter to go through the tutorial.</p>
@@ -864,7 +965,8 @@
         <p>Add your custom tasks in the left sidebar; you can see the tasks you added below the Create Task button.</p>
       </div>
       <div class="tutorial-step" id="step6">
-        <p>If you want to create recurring events with more details, you can create those events in the left sidebar as well.</p>
+        <p>If you want to create recurring events with more details, you can create those events in the left sidebar as
+          well.</p>
       </div>
       <div class="tutorial-step" id="step7">
         <p>After adding tasks and events, you can click and drag them to move them around. To delete events, you can
@@ -875,8 +977,13 @@
     <h2 id="dynamicText"> Loading...</h2>
     <a href="#" id="runTutorialLink"
       style="display: none; position: absolute; bottom: 10px; right: 10px; font-size: 16px;">Run Tutorial</a>
+
+
   </div>
-  <button onclick="logout()" id="logoutButton" style="position: absolute; top: 10px; right: 10px;">Logout</button>
+
+
+
+
 </body>
 
 

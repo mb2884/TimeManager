@@ -12,6 +12,7 @@ import sqlalchemy.orm
 import dotenv
 import database
 import pytz
+import datetime
 
 dotenv.load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -34,6 +35,11 @@ def get_user_id(username):
                 # Create a new AppUser entry for the username
                 new_user = database.AppUser(username=username)
                 session.add(new_user)
+                # Set default user settings
+                new_user.earliest_time = datetime.time(8, 0)
+                new_user.latest_time = datetime.time(22, 0)
+                new_user.ideal_chunk_size = 120
+                new_user.event_padding = 10
                 session.commit()
                 return new_user.id
 
@@ -247,6 +253,46 @@ def update_event(event_id, title, start, end, all_day):
                 print(f"Event with ID {event_id} updated successfully.")
             else:
                 print(f"Event with ID {event_id} not found.")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+        
+def get_user_settings(user_id):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Query the AppUser object from the database
+            app_user = session.query(database.AppUser).filter_by(id=user_id).first()
+
+            if app_user:
+                return app_user.earliest_time, app_user.latest_time, app_user.ideal_chunk_size, app_user.event_padding
+            else:
+                return None
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+        
+def update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, event_padding):
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Retrieve the user settings to be updated
+            user_settings_to_update = session.query(
+                database.AppUser).filter_by(id=user_id).first()
+
+            if user_settings_to_update:
+                # Update the user settings
+                user_settings_to_update.earliest_time = earliest_time
+                user_settings_to_update.latest_time = latest_time
+                user_settings_to_update.ideal_chunk_size = ideal_chunk_size
+                user_settings_to_update.event_padding = event_padding
+                session.commit()
+                print(f"User settings for user with ID {user_id} updated successfully.")
+            else:
+                print(f"User settings for user with ID {user_id} not found.")
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
