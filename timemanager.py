@@ -17,6 +17,7 @@ import auth
 import tasksplitter
 import dotenv
 from datetime import datetime, timedelta
+from dateutil import parser
 
 
 # ----------------------------------------------------------------------
@@ -96,14 +97,17 @@ def add_task():
    data = request.get_json()
    username = data.get('username')
    title = data.get('title')
-   start = data.get('start')
-   end = data.get('end')
+   start = parser.parse(data.get('start')) - timedelta(hours=4)
+   end = parser.parse(data.get('end')) - timedelta(hours=4)
    length = data.get('length')
+   events = data.get('events')
    user_id = database.get_user_id(username)
+   
+   print("Adding task: ", username, title, start, end, length)
 
 
    task_id = database.addTask(user_id, title, start, end, length)
-   tasksplitter.split_tasks(user_id, title, start, end, length, task_id)
+   tasksplitter.split_tasks(user_id, title, start, end, length, task_id, events)
    return jsonify({'id': task_id})
 
 

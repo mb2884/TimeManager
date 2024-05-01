@@ -31,6 +31,13 @@
         navLinks: true,
         selectable: true,
         selectMirror: true,
+        selectOverlap: false,
+        eventConstraint: {
+          start: '00:00',
+          end: '24:00'
+        },
+        eventOverlap: false,
+
         eventClick: function (arg) {
           if (confirm('Are you sure you want to delete this event?')) {
             // Send an AJAX request to delete the event from the database
@@ -183,7 +190,6 @@
       };
 
 
-      // Function to validate all task fields
       function validateTaskFields() {
         var title = $('#taskName').val();
         var duration = parseInt($('#duration').val());
@@ -192,9 +198,11 @@
         var dueDate = $('#dueDate').val();
         var dueTime = $('#dueTime').val();
 
+        console.log("in validateTaskFields")
 
-        if (isNaN(duration) || duration <= 0) {
-          $('#durationError').text('Duration must be a positive number.');
+        // Check if the duration is a positive integer
+        if (isNaN(duration) || duration <= 0 || duration % 1 !== 0) {
+          $('#durationError').text('Duration must be a positive integer.');
           return false;
         }
 
@@ -204,7 +212,10 @@
           $('#durationError').text('Please fill out all fields.');
           return false;
         }
-
+        if (isNaN(duration) || duration <= 0) {
+          $('#durationError').text('Duration must be a positive number.');
+          return false;
+        }
 
         // Check if due date is after start date
         var startDateTime = new Date(startDate + ' ' + startTime);
@@ -214,7 +225,20 @@
           return false;
         }
 
+        // Check to see if the task is longer than the time between the start and end date
+        var timeDifference = endDateTime - startDateTime;
+        var hoursDifference = timeDifference / (1000 * 3600);
+        if (hoursDifference < duration) {
+          $('#durationError').text('Task duration is longer than the time between start and end date.');
+          return false;
+        }
+        // Check if the title is too long
+        if (title.length > 45) {
+          $('#durationError').text('Task name must be under 45 characters.');
+          return false;
+        }
 
+        // Clear the error message if all fields are valid
         $('#durationError').text('');
         return true;
       }
@@ -236,8 +260,13 @@
         let dueTime = $('#dueTime').val();
 
 
-        let startDateTime = new Date(startDate + ' ' + startTime); // Combine start date and time
-        let endDateTime = new Date(dueDate + ' ' + dueTime); // Combine due date and time
+        let startDateTime = new Date(Date.parse(startDate + ' ' + startTime));
+        startDateTime.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        console.log("startDateTime", startDateTime);
+
+        let endDateTime = new Date(Date.parse(dueDate + ' ' + dueTime));
+        endDateTime.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        console.log("endDateTime", endDateTime);
 
 
         // Send task details to the server
@@ -248,9 +277,10 @@
           data: JSON.stringify({
             username: '{{username}}',
             title: title,
-            start: startDateTime,
-            end: endDateTime,
-            length: duration // Include task-specific field
+            start: startDateTime.toISOString(),
+            end: endDateTime.toISOString(),
+            length: duration, // Include task-specific field
+            events: calendar.getEvents()
           }),
           success: function (response) {
             // Handle success response if needed
@@ -280,15 +310,50 @@
 
       function validateEventFields() {
         var title = $('#eventName').val();
-        var startDate = $('#startDate').val();
-        var startTime = $('#startTime').val();
+        var startDate = $('#firstDate').val();
+        var startTime = $('#firstTime').val();
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
         var color = $('#color').val();
+        var startDateTime = new Date(startDate + ' ' + startTime);
+        var endDateTime = new Date(endDate + ' ' + endTime);
+        var monday = $('#monday').is(':checked');
+        var tuesday = $('#tuesday').is(':checked');
+        var wednesday = $('#wednesday').is(':checked');
+        var thursday = $('#thursday').is(':checked');
+        var friday = $('#friday').is(':checked');
+        var saturday = $('#saturday').is(':checked');
+        var sunday = $('#sunday').is(':checked');
+        var recurEndDate = $('#recurEndDate').val();
+        // Check if any field is empty
+        if (title.trim() === '' || startDate === '' || startTime === '' || endDate === '' || endTime === '' ) {
+          $('#TimeError').text('Please fill out all fields.'); // Welll, it's not really alll fields is it?
+          return false;
+        }
+        if (endDateTime <= startDateTime) {
+          $('#TimeError').text('End date must be after start date.');
+          return false;
+        }
+        if (title.length > 45) {
+          $('#TimeError').text('Event name must be under 45 characters.');
+          return false;
+        }
 
+        // Check if checkboxes any checkboxes are checked while the end date is empty
+        if ((monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate === '') {
+          $('#TimeError').text('Please enter an end date for recurring events.');
+          return false;
+        }
 
+        // Check to see if end date is full but no checkboxes are checked
+        if (!(monday || tuesday || wednesday || thursday || friday || saturday || sunday) && recurEndDate !== '') {
+          $('#TimeError').text('Please select at least one day of the week for recurring events.');
+          return false;
+        }
+
+        // Clear the error message if all fields are valid
+        $('#TimeError').text('');
         return true;
-
       };
 
       function addEvent() {
@@ -299,15 +364,16 @@
         var title = $('#eventName').val();
         var startDate = $('#firstDate').val();
         var startTime = $('#firstTime').val();
-        var start = new Date(startDate + ' ' + startTime);
-        start.setHours(start.getHours() - 4); // Subtract 4 hours
-        console.log(start.toISOString()); // Convert to ISO string
         
         var endDate = $('#endDate').val();
         var endTime = $('#endTime').val();
-        var end = new Date(endDate + ' ' + endTime);
-        end.setHours(end.getHours() - 4); // Subtract 4 hours
-        console.log(end.toISOString()); // Convert to ISO string
+
+        var start = new Date(Date.parse(startDate + ' ' + startTime));
+        start = start.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        console.log("start", start);
+        var end = new Date(Date.parse(endDate + ' ' + endTime));
+        end = end.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        console.log("end", end);
         
         var color = $('#color').val();
 
@@ -329,7 +395,6 @@
         if (thursday) daysOfWeek.push(4);
         if (friday) daysOfWeek.push(5);
         if (saturday) daysOfWeek.push(6);
-        console.log(daysOfWeek);
         // Send event details to the server
 
 
@@ -659,12 +724,12 @@
     }
 
     $(document).on('click', '#taskAdder', function () {
-      console.log('task adder clicked')
+      console.log('task adder clicked');
       toggleSidebar('task');
     })
 
     $(document).on('click', '#eventAdder', function () {
-      console.log('event adder clicked')
+      console.log('event adder clicked');
       toggleSidebar('event');
     })
 
@@ -774,6 +839,7 @@
 
     <button id="addEventButton">Create Event</button>
     <br><br>
+    <span id="TimeError" style="color: red;"></span>
 
 
   </div>

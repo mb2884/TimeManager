@@ -11,9 +11,12 @@ import sqlalchemy
 import sqlalchemy.orm
 import dotenv
 import database
+import pytz
 
 dotenv.load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
+
+nytz = pytz.timezone('America/New_York')
 
 # ----------------------------------------------------------------------
 
@@ -150,7 +153,7 @@ def getEvents(user_id, filter_by_date=None):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def getTasks(user_id):
     try:
