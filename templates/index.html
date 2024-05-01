@@ -703,14 +703,29 @@
     });
 
     function openSettings() {
-      var settings = document.getElementById("settingsMenu")
-      if (settings.style.display === 'none') {
+      var settings = document.getElementById("settingsMenu");
+      if (settings.style.display === 'none' || settings.style.display === '') {
+        $('#settings').addClass('red');
         settings.style.display = 'block';
+          $('#settingsMenu').removeClass('slideRight');
+          $('#settingsMenu').addClass('slideLeft');
+          $('#dynamicText').addClass('slideDown');
+          $('#dynamicText').removeClass('slideUp');
       } else {
-        settings.style.display = 'none';
+        $('#settings').removeClass('red');
+        $('#settingsMenu').removeClass('slideLeft');
+        $('#settingsMenu').addClass('slideRight');
+        $('#dynamicText').removeClass('slideDown');
+        $('#dynamicText').addClass('slideUp');
+        settings.addEventListener('transitionend', () => {
+          settings.style.display = 'none';
+        }, { once: true });
+        setTimeout(() => {
+          settings.style.display = 'none';
+        }, 400); // Adjust timeout to match transition duration
       }
-
     }
+    
 
     function validateSettings() {
       var earliestTime = $('#earliestTime').val();

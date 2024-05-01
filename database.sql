@@ -12,7 +12,7 @@ CREATE TABLE app_user (
     username TEXT NOT NULL,
     earliest_time TIME(0) DEFAULT '08:00:00' NOT NULL,
     latest_time TIME(0) DEFAULT '20:00:00' NOT NULL,
-    ideal_chunk_size INT DEFAULT 30 NOT NULL,
+    ideal_chunk_size INT DEFAULT 60 NOT NULL,
     event_padding INT DEFAULT 10 NOT NULL
 );
 
