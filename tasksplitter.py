@@ -24,6 +24,10 @@ nytz = pytz.timezone('America/New_York')
 # ----------------------------------------------------------------------
 def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
     work_start_time, work_end_time, ideal_chunk_length, event_padding = database.get_user_settings(user_id)
+    # format work_start_time and work_end_time
+    work_start_time = work_start_time.hour
+    work_end_time = work_end_time.hour
+    
     print("User settings: ", work_start_time, work_end_time, ideal_chunk_length, event_padding)
     
     
