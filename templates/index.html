@@ -297,9 +297,15 @@
             // Update the task list with the newly added task
             $('#taskList').append('<li>' + title + '<a href="#" class="delete-task" data-id="' + response.id + '">❌</a></li>');
             refreshCalendar();
-
-
             fetchAndDisplayTasks();
+
+            // Clear the input fields
+            $('#taskName').val('');
+            $('#duration').val('');
+            $('#startDate').val('');
+            $('#startTime').val('');
+            $('#dueDate').val('');
+            $('#dueTime').val('');
           },
           error: function (xhr, status, error) {
             // Handle error response if needed
@@ -309,15 +315,6 @@
             refreshCalendar();
           }
         });
-
-
-        // Clear the input fields
-        //$('#taskName').val('');
-        //$('#duration').val('');
-        //$('#startDate').val('');
-        //$('#startTime').val('');
-        //$('#dueDate').val('');
-        //$('#dueTime').val('');
       }
 
       function validateEventFields() {
@@ -445,6 +442,23 @@
 
               });
               refreshCalendar(); // Refresh the calendar after adding the event
+
+              // clear the input fields
+              $('#eventName').val('');
+              $('#firstDate').val('');
+              $('#firstTime').val('');
+              $('#endDate').val('');
+              $('#endTime').val('');
+              $('color').val('');
+              // Clear the checkbox fields for the days of the week
+              $('#sunday').prop('checked', false);
+              $('#monday').prop('checked', false);
+              $('#tuesday').prop('checked', false);
+              $('#wednesday').prop('checked', false);
+              $('#thursday').prop('checked', false);
+              $('#friday').prop('checked', false);
+              $('#saturday').prop('checked', false);
+              $('#recurEndDate').val('');
             }
 
 
