@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
     navLinks: true,
     selectable: true,
     selectMirror: true,
-    selectOverlap: false,
+    selectOverlap: true,
     eventConstraint: {
       start: "00:00",
       end: "24:00",
     },
-    eventOverlap: false,
+    eventOverlap: true,
 
     eventClick: function (arg) {
       if (confirm("Are you sure you want to delete this event?")) {
@@ -137,6 +137,30 @@ document.addEventListener("DOMContentLoaded", function () {
         },
       });
     },
+    eventDrop: function (arg) {
+      // When an event is dropped/moved, send an AJAX request to update the event on the server
+      $.ajax({
+        type: "POST",
+        url: "/update-event",
+        contentType: "application/json",
+        data: JSON.stringify({
+          event_id: arg.event._def.publicId,
+          start: arg.event.start.toISOString(),
+          end: arg.event.end ? arg.event.end.toISOString() : arg.event._instance.range.end.toISOString(), // Check if the event has an end time
+          allDay: arg.event.allDay,
+          title: arg.event.title,
+        }),
+        success: function (response) {
+          //refreshCalendar();
+          console.log(response); // Log success message
+        },
+        error: function (_xhr, _status, error) {
+          refreshCalendar();
+          console.error(error); // Log error message
+          // Handle errors and provide feedback to the user
+        },
+      });
+    },
   });
 
   calendar.render();
@@ -201,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $("#durationError").text("Please fill out all fields.");
       return false;
     }
-    
+
     if (isNaN(duration) || duration <= 0) {
       $("#durationError").text("Duration must be a positive number.");
       return false;
@@ -841,12 +865,10 @@ function saveSettings() {
     }),
     success: function (response) {
       console.log(response); // Log success message
-      refreshCalendar();
     },
     error: function (_xhr, _status, error) {
       alert("Could not save settings. Please try again.");
       console.error(error);
-      refreshCalendar();
     },
   };
 

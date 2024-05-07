@@ -12,7 +12,7 @@ import sqlalchemy.orm
 import dotenv
 import database
 import pytz
-import datetime
+from datetime import datetime, time
 
 dotenv.load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -110,8 +110,10 @@ def getEvents(user_id, filter_by_date=None):
 
                 event_dict = {
                     'title': event.title,
-                    'start': event.start_time.isoformat(),  # Convert datetime to ISO format
-                    'end': event.end_time.isoformat(),  # Convert datetime to ISO format
+                    # Convert datetime to ISO format
+                    'start': event.start_time.isoformat() if event.start_time else None,
+                    # Convert datetime to ISO format
+                    'end': event.end_time.isoformat() if event.end_time else None,
                     'allDay': event.all_day,
                     'id': event.id,
                     'parentTaskID': event.parent_task_id,
@@ -290,11 +292,12 @@ def delete_task(task_id):
 
 
 def update_event(event_id, title, start, end, all_day):
-    assert event_id is not None, "Event ID cannot be None"
+    if all_day != True:
+        assert start is not None, "Start time cannot be None"
+        assert end is not None, "End time cannot be None"
+        assert all_day is not None, "All day cannot be None"
     assert title is not None, "Title cannot be None"
-    assert start is not None, "Start time cannot be None"
-    assert end is not None, "End time cannot be None"
-    assert all_day is not None, "All day cannot be None"
+    assert event_id is not None, "Event ID cannot be None"
     print(f"Updating event with ID {event_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
