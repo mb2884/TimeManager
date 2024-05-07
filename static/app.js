@@ -188,12 +188,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var dueDate = $("#dueDate").val();
     var dueTime = $("#dueTime").val();
 
-    // Check if the duration is a positive integer
-    if (isNaN(duration) || duration <= 0 || duration % 1 !== 0) {
-      $("#durationError").text("Duration must be a positive integer.");
-      return false;
-    }
-
     // Check if any field is empty
     if (
       title.trim() === "" ||
@@ -207,6 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $("#durationError").text("Please fill out all fields.");
       return false;
     }
+    
     if (isNaN(duration) || duration <= 0) {
       $("#durationError").text("Duration must be a positive number.");
       return false;
