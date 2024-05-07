@@ -16,13 +16,13 @@ import datetime
 
 dotenv.load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
-
 nytz = pytz.timezone('America/New_York')
 
 # ----------------------------------------------------------------------
 
 
 def get_user_id(username):
+    assert username is not None, "Username cannot be None"
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -52,57 +52,20 @@ def get_user_id(username):
 # ----------------------------------------------------------------------
 
 
-def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
+def get_user_settings(user_id):
+    assert user_id is not None, "User ID cannot be None"
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
         with sqlalchemy.orm.Session(engine) as session:
-            if days_of_week:
-                days_of_week = ','.join(str(x) for x in days_of_week)
+            # Query the AppUser object from the database
+            app_user = session.query(
+                database.AppUser).filter_by(id=user_id).first()
+
+            if app_user:
+                return app_user.earliest_time, app_user.latest_time, app_user.ideal_chunk_size, app_user.event_padding
             else:
-                days_of_week = None
-                start_recur = None
-                end_recur = None
-            print("Event info: ", user_id, title, start_time, end_time, all_day,
-                  parent_task_id, color, days_of_week, start_recur, end_recur)
-            app_event = database.AppEvent(
-                user_id=user_id,
-                title=title,
-                start_time=start_time,
-                end_time=end_time,
-                all_day=all_day,
-                parent_task_id=parent_task_id,
-                color=color,
-                days_of_week=days_of_week,
-                start_recur=start_recur,
-                end_recur=end_recur
-            )
-            session.add(app_event)
-            session.commit()
-            return app_event.id
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
-
-# ----------------------------------------------------------------------
-
-
-def addTask(user_id, title, start_time, due_date, est_length):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-            app_task = database.AppTask(
-                user_id=user_id,
-                title=title,
-                start_time=start_time,
-                due_date=due_date,
-                est_length=est_length
-            )
-            session.add(app_task)
-            session.commit()
-            return app_task.id
+                return None
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -112,6 +75,7 @@ def addTask(user_id, title, start_time, due_date, est_length):
 
 
 def getEvents(user_id, filter_by_date=None):
+    assert user_id is not None, "User ID cannot be None"
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -171,6 +135,7 @@ def getEvents(user_id, filter_by_date=None):
 
 
 def getTasks(user_id):
+    assert user_id is not None, "User ID cannot be None"
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -198,11 +163,84 @@ def getTasks(user_id):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+# ----------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
+
+def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
+    assert user_id is not None, "User ID cannot be None"
+    assert title is not None, "Title cannot be None"
+    assert start_time is not None, "Start time cannot be None"
+    assert end_time is not None, "End time cannot be None"
+    assert all_day is not None, "All day cannot be None"
+    print("Adding event with: ", user_id, title, start_time, end_time,
+          all_day, parent_task_id, color, days_of_week, start_recur, end_recur)
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            if days_of_week:
+                days_of_week = ','.join(str(x) for x in days_of_week)
+            else:
+                days_of_week = None
+                start_recur = None
+                end_recur = None
+            print("Adding event with: ", user_id, title, start_time, end_time, all_day,
+                  parent_task_id, color, days_of_week, start_recur, end_recur)
+            app_event = database.AppEvent(
+                user_id=user_id,
+                title=title,
+                start_time=start_time,
+                end_time=end_time,
+                all_day=all_day,
+                parent_task_id=parent_task_id,
+                color=color,
+                days_of_week=days_of_week,
+                start_recur=start_recur,
+                end_recur=end_recur
+            )
+            session.add(app_event)
+            session.commit()
+            return app_event.id
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# ----------------------------------------------------------------------
+
+
+def addTask(user_id, title, start_time, due_date, est_length):
+    assert user_id is not None, "User ID cannot be None"
+    assert title is not None, "Title cannot be None"
+    assert start_time is not None, "Start time cannot be None"
+    assert due_date is not None, "Due date cannot be None"
+    assert est_length is not None, "Estimated length cannot be None"
+    print("Adding task with: ", user_id, title,
+          start_time, due_date, est_length)
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            app_task = database.AppTask(
+                user_id=user_id,
+                title=title,
+                start_time=start_time,
+                due_date=due_date,
+                est_length=est_length
+            )
+            session.add(app_task)
+            session.commit()
+            return app_task.id
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+
+# ----------------------------------------------------------------------
 
 
 def delete_event(event_id):
+    assert event_id is not None, "Event ID cannot be None"
     print(f"Deleting event with ID {event_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -227,6 +265,7 @@ def delete_event(event_id):
 
 
 def delete_task(task_id):
+    assert task_id is not None, "Task ID cannot be None"
     print(f"Deleting task with ID {task_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -247,8 +286,16 @@ def delete_task(task_id):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
+# ----------------------------------------------------------------------
+
 
 def update_event(event_id, title, start, end, all_day):
+    assert event_id is not None, "Event ID cannot be None"
+    assert title is not None, "Title cannot be None"
+    assert start is not None, "Start time cannot be None"
+    assert end is not None, "End time cannot be None"
+    assert all_day is not None, "All day cannot be None"
+    print(f"Updating event with ID {event_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -271,27 +318,16 @@ def update_event(event_id, title, start, end, all_day):
         print(ex, file=sys.stderr)
         sys.exit(1)
 
-
-def get_user_settings(user_id):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-            # Query the AppUser object from the database
-            app_user = session.query(
-                database.AppUser).filter_by(id=user_id).first()
-
-            if app_user:
-                return app_user.earliest_time, app_user.latest_time, app_user.ideal_chunk_size, app_user.event_padding
-            else:
-                return None
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+# ----------------------------------------------------------------------
 
 
 def update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, event_padding):
+    assert user_id is not None, "User ID cannot be None"
+    assert earliest_time is not None, "Earliest time cannot be None"
+    assert latest_time is not None, "Latest time cannot be None"
+    assert ideal_chunk_size is not None, "Ideal chunk size cannot be None"
+    assert event_padding is not None, "Event padding cannot be None"
+    print(f"Updating user settings for user with ID {user_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 

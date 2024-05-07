@@ -50,7 +50,7 @@ body {
 
 #addTaskButton,
 #addEventButton {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   /* Green */
   border: none;
   color: white;
@@ -113,7 +113,6 @@ body {
   /* Adjust font size */
 }
 
-
 button {
   padding: 10px 20px;
   font-size: 16px;
@@ -129,8 +128,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-
-
 /* Customize the calendar header */
 .fc-header-toolbar {
   background-color: #f4f4f4;
@@ -138,7 +135,6 @@ button:hover {
   border-radius: 8px 8px 0 0;
   /* Add border radius */
 }
-
 
 .fc-header-toolbar h2 {
   font-size: 18px;
@@ -175,8 +171,6 @@ button:hover {
   padding: 4px 8px;
   /* Add padding */
 }
-
-
 
 .fc-daygrid-dot-event {
   color: #000000;
@@ -288,7 +282,6 @@ button:hover {
   }
 }
 
-
 #settingsMenu label {
   display: block;
   margin-bottom: 5px;
@@ -305,7 +298,7 @@ button:hover {
 }
 
 #saveSettingsButton {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 10px 20px;
@@ -381,9 +374,15 @@ button:hover {
 }
 
 @keyframes attention {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Apply Animation to Element */

@@ -10,21 +10,18 @@
 import os
 import flask
 from flask import request, jsonify
-# import flask_wtf.csrf
-# import flask_talisman
+import flask_talisman
 import dbfuncs as database
 import auth
 import tasksplitter
 import dotenv
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dateutil import parser
 
 
 # ----------------------------------------------------------------------
 
-
 app = flask.Flask(__name__, )
-
 
 # Set the static folder
 app.static_folder = os.path.join(
@@ -34,34 +31,21 @@ app.static_folder = os.path.join(
 dotenv.load_dotenv()
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
-
-# flask_wtf.csrf.CSRFProtect(app)
-# flask_talisman.Talisman(app, content_security_policy=None)
-
+flask_talisman.Talisman(app, content_security_policy=None)
 
 # ----------------------------------------------------------------------
-
-
-# Routes for authentication.
 
 
 @app.route('/logoutapp', methods=['GET'])
 def logoutapp():
     return auth.logoutapp()
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/logoutcas', methods=['GET'])
 def logoutcas():
     return auth.logoutcas()
-
-
-# @app.route('/logout')
-# def logout():
-# logout_url = 'https://fed.princeton.edu/cas/logout'
-#    service_url = urllib.parse.quote(request.url_root + 'logout')
-#    redirect_url = logout_url + '?service=' + service_url
-#    return redirect(redirect_url)
-
 
 # ----------------------------------------------------------------------
 
@@ -87,6 +71,8 @@ def add_event():
         user_id, title, start, end, all_day, None, color, days_of_week, start_recur, end_recur)
     return jsonify({'id': event_id})
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/add-task', methods=['POST'])
 def add_task():
@@ -110,6 +96,8 @@ def add_task():
         return jsonify({'error': str(ex)}), 500
     return jsonify({'id': task_id})
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/update-event', methods=['POST'])
 def update_event():
@@ -127,6 +115,8 @@ def update_event():
         return jsonify({'message': 'Event updated successfully'})
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
+
+# ----------------------------------------------------------------------
 
 
 @app.route('/save-settings', methods=['POST'])
@@ -149,6 +139,8 @@ def save_settings():
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/delete-event', methods=['POST'])
 def delete_event():
@@ -166,13 +158,14 @@ def delete_event():
         # If an error occurs, return an error message
         return jsonify({'error': str(ex)}), 500
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/delete-task', methods=['POST'])
 def delete_task():
     try:
         data = request.get_json()
         task_id = data.get('task_id')
-        print("reported task_id: ", task_id)
 
         # Implement the logic to delete the event from the database
         database.delete_task(task_id)
@@ -183,6 +176,8 @@ def delete_task():
         # If an error occurs, return an error message
         return jsonify({'error': str(ex)}), 500
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/get-events', methods=['GET'])
 def get_events():
@@ -190,6 +185,8 @@ def get_events():
     user_id = database.get_user_id(username)
 
     return flask.jsonify(database.getEvents(user_id))
+
+# ----------------------------------------------------------------------
 
 
 @app.route('/get-tasks', methods=['GET'])
@@ -208,6 +205,8 @@ def get_tasks():
 def landing():
     return flask.render_template('landing.html')
 
+# ----------------------------------------------------------------------
+
 
 @app.route('/index', methods=['GET'])
 def index():
@@ -221,7 +220,6 @@ def index():
                                       ideal_chunk_length=ideal_chunk_length,
                                       event_padding=event_padding)
     response = flask.make_response(html_code)
-    print(database.getEvents(database.get_user_id(username)))
     return response
 
 

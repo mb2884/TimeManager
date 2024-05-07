@@ -27,6 +27,11 @@ nytz = pytz.timezone('America/New_York')
 def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
     work_start_time, work_end_time, ideal_chunk_length, event_padding = database.get_user_settings(
         user_id)
+    
+    assert (
+        all(val is not None for val in [work_start_time, work_end_time, ideal_chunk_length, event_padding, start, end, length, task_id, calendar_events, title, user_id])
+    ), "One or more arguments are None"
+    
     # format work_start_time and work_end_time
     work_start_time = work_start_time.hour
     work_end_time = work_end_time.hour
