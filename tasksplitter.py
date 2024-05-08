@@ -42,21 +42,16 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
     # print('Start: ', start)
     # print('End: ', end)
     event_times = {}
-    # current_day = start.replace(tzinfo=nytz)
+    current_day = start.replace(tzinfo=nytz)
     # Extract just the date
-    current_day = start
-    current_day_days = current_day.day
+    # current_day = start
     # print("Current day: ", current_day)
-    # print("Current day days: ", current_day_days)
-    # end_day = end.replace(tzinfo=nytz)
-    end_day = end
-    end_day_days = end_day.day
+    end_day = end.replace(tzinfo=nytz)
+    # end_day = end
     # print("End day: ", end_day)
-    # print("End day days: ", end_day_days)
 
-    while current_day_days <= end_day_days:
+    while current_day <= end_day:
         event_times[current_day.date()] = 0
-        current_day_days += 1
         current_day += datetime.timedelta(days=1)
 
     for event in events:
@@ -74,15 +69,15 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
 
     time_left_in_task = length * 60
     k = 1
-    print("Event times: ", event_times)
+    # print("Event times: ", event_times)
     while time_left_in_task > 0:
         print("K: ", k)
         if k > len(event_times):
             # print("K: ", k)
             # print("len Event times: ", len(event_times))
             # print("Not enough time to schedule task")
-            # raise Exception("Not enough time to schedule task")
-            return
+            raise Exception("Not enough time to schedule task")
+            # return
         if time_left_in_task <= 0:
             # print("Task scheduled")
             break
@@ -108,7 +103,7 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
                 event_start = parser.parse(event['start']).replace(tzinfo=nytz)
                 event_end = parser.parse(event['end']).replace(tzinfo=nytz)
                 # print("Event start: ", event_start)
-               # print("Event end: ", event_end)
+                # print("Event end: ", event_end)
                 if current_day < event_end and current_day + datetime.timedelta(minutes=ideal_chunk_length) > event_start:
                     overlap = True
                     continue
@@ -123,7 +118,7 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
                 #     chunk_end = min_day
                 # print("Chunk start: ", chunk_start)
                 # print("Chunk end: ", chunk_end)
-                # print("min_day: ",  datetime.datetime.combine(min_day, datetime.time(hour=min_day.hour)).replace(tzinfo=nytz))
+
                 # add to database
                 database.addEvent(user_id, title, chunk_start.replace(tzinfo=None), chunk_end.replace(
                     tzinfo=None), False, task_id, "#4CAF50", None, None, None)
@@ -149,10 +144,13 @@ def split_tasks(user_id, title, start, end, length, task_id,  calendar_events):
             current_day += datetime.timedelta(
                 minutes=ideal_chunk_length + event_padding)
 
-        print("time left in task: ", time_left_in_task)
-        print("Current day: ", current_day)
-        print("Min day: ", datetime.datetime.combine(
-            min_day, datetime.time(hour=work_end_time)).replace(tzinfo=nytz))
-        print(current_day < datetime.datetime.combine(
-            min_day, datetime.time(hour=work_end_time)).replace(tzinfo=nytz))
+        # print("time left in task: ", time_left_in_task)
+        # print("Current day: ", current_day)
+        # print("Min day: ", datetime.datetime.combine(
+        #     min_day, datetime.time(hour=work_end_time)).replace(tzinfo=nytz))
+        # print(current_day < datetime.datetime.combine(
+        #     min_day, datetime.time(hour=work_end_time)).replace(tzinfo=nytz))
         k += 1
+
+
+# ----------------------------------------------------------------------

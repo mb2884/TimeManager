@@ -146,7 +146,9 @@ document.addEventListener("DOMContentLoaded", function () {
         data: JSON.stringify({
           event_id: arg.event._def.publicId,
           start: arg.event.start.toISOString(),
-          end: arg.event.end ? arg.event.end.toISOString() : arg.event._instance.range.end.toISOString(), // Check if the event has an end time
+          end: arg.event.end
+            ? arg.event.end.toISOString()
+            : arg.event._instance.range.end.toISOString(), // Check if the event has an end time
           allDay: arg.event.allDay,
           title: arg.event.title,
         }),
@@ -433,9 +435,11 @@ document.addEventListener("DOMContentLoaded", function () {
     var color = $("#color").val();
 
     var recurEndDate = $("#recurEndDate").val();
-    var date = new Date(recurEndDate);
-    date.setDate(date.getDate() + 1);
-    recurEndDate = date.toISOString().split("T")[0];
+    if (recurEndDate !== "" && recurEndDate !== null) {
+      var date = new Date(recurEndDate);
+      date.setDate(date.getDate() + 1);
+      recurEndDate = date.toISOString().split("T")[0];
+    }
 
     var sunday = $("#sunday").is(":checked");
     var monday = $("#monday").is(":checked");

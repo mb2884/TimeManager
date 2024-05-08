@@ -38,8 +38,8 @@ def get_user_id(username):
                 new_user = database.AppUser(username=username)
                 session.add(new_user)
                 # Set default user settings
-                new_user.earliest_time = datetime.time(8, 0)
-                new_user.latest_time = datetime.time(22, 0)
+                new_user.earliest_time = time(8, 0)
+                new_user.latest_time = time(22, 0)
                 new_user.ideal_chunk_size = 120
                 new_user.event_padding = 10
                 session.commit()
@@ -169,11 +169,9 @@ def getTasks(user_id):
 
 
 def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None, color=None, days_of_week=None, start_recur=None, end_recur=None):
-    assert user_id is not None, "User ID cannot be None"
-    assert title is not None, "Title cannot be None"
-    assert start_time is not None, "Start time cannot be None"
-    assert end_time is not None, "End time cannot be None"
-    assert all_day is not None, "All day cannot be None"
+    assert any([user_id, title, start_time, end_time, all_day]
+               ), "One or more arguments are None"
+
     print("Adding event with: ", user_id, title, start_time, end_time,
           all_day, parent_task_id, color, days_of_week, start_recur, end_recur)
     try:
@@ -212,11 +210,9 @@ def addEvent(user_id, title, start_time, end_time, all_day, parent_task_id=None,
 
 
 def addTask(user_id, title, start_time, due_date, est_length):
-    assert user_id is not None, "User ID cannot be None"
-    assert title is not None, "Title cannot be None"
-    assert start_time is not None, "Start time cannot be None"
-    assert due_date is not None, "Due date cannot be None"
-    assert est_length is not None, "Estimated length cannot be None"
+    assert any([user_id, title, start_time, due_date, est_length]
+               ),  "One or more arguments are None"
+
     print("Adding task with: ", user_id, title,
           start_time, due_date, est_length)
     try:
@@ -291,13 +287,51 @@ def delete_task(task_id):
 # ----------------------------------------------------------------------
 
 
+def delete_all(user_id):
+    assert user_id is not None, "User ID cannot be None"
+    print(f"Deleting all events and tasks for user with ID {user_id}...")
+    try:
+        engine = sqlalchemy.create_engine(DATABASE_URL)
+
+        with sqlalchemy.orm.Session(engine) as session:
+            # Retrieve the events to be deleted
+            events_to_delete = session.query(
+                database.AppEvent).filter_by(user_id=user_id).all()
+
+            for event in events_to_delete:
+                session.delete(event)
+
+            # Retrieve the tasks to be deleted
+            tasks_to_delete = session.query(
+                database.AppTask).filter_by(user_id=user_id).all()
+
+            for task in tasks_to_delete:
+                session.delete(task)
+
+            # Retreive the user settings to be deleted
+            user_settings_to_delete = session.query(
+                database.AppUser).filter_by(id=user_id).first()
+            session.delete(user_settings_to_delete)
+
+            # # Retreive the user to be deleted
+            # user_to_delete = session.query(
+            #     database.AppUser).filter_by(id=user_id).first()
+            # session.delete(user_to_delete)
+
+            session.commit()
+            print(
+                f"All mention of user with ID {user_id} has been deleted successfully.")
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        sys.exit(1)
+# ----------------------------------------------------------------------
+
+
 def update_event(event_id, title, start, end, all_day):
     if all_day != True:
-        assert start is not None, "Start time cannot be None"
-        assert end is not None, "End time cannot be None"
-        assert all_day is not None, "All day cannot be None"
-    assert title is not None, "Title cannot be None"
-    assert event_id is not None, "Event ID cannot be None"
+        assert any([start, end, all_day]), "One or more arguments are None"
+
+    assert any([event_id, title]), "One or more arguments are None"
     print(f"Updating event with ID {event_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
@@ -325,11 +359,9 @@ def update_event(event_id, title, start, end, all_day):
 
 
 def update_user_settings(user_id, earliest_time, latest_time, ideal_chunk_size, event_padding):
-    assert user_id is not None, "User ID cannot be None"
-    assert earliest_time is not None, "Earliest time cannot be None"
-    assert latest_time is not None, "Latest time cannot be None"
-    assert ideal_chunk_size is not None, "Ideal chunk size cannot be None"
-    assert event_padding is not None, "Event padding cannot be None"
+    assert any([user_id, earliest_time, latest_time, ideal_chunk_size,
+               event_padding]), "One or more arguments are None"
+
     print(f"Updating user settings for user with ID {user_id}...")
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
