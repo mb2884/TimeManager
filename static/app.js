@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 
 document.addEventListener("DOMContentLoaded", function () {
   var calendarEl = document.getElementById("calendar");
