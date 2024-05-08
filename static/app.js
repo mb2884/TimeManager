@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
     dayMaxEvents: true,
     select: function (arg) {
       var title = prompt("Event Title:");
-      // var recurring = $('#recurring').val();
 
       if (title) {
         let requestData = {
@@ -98,18 +97,16 @@ document.addEventListener("DOMContentLoaded", function () {
         data: JSON.stringify({
           event_id: arg.event._def.publicId,
           start: arg.event.start.toISOString(),
-          end: arg.event.end ? arg.event.end.toISOString() : null, // Check if the event has an end time
+          end: arg.event.end ? arg.event.end.toISOString() : null, 
           allDay: arg.event.allDay,
           title: arg.event.title,
         }),
         success: function (response) {
-          //refreshCalendar();
           console.log(response); // Log success message
         },
         error: function (_xhr, _status, error) {
           refreshCalendar();
           console.error(error); // Log error message
-          // Handle errors and provide feedback to the user
         },
       });
     },
@@ -127,13 +124,11 @@ document.addEventListener("DOMContentLoaded", function () {
           title: arg.event.title,
         }),
         success: function (response) {
-          //refreshCalendar();
-          console.log(response); // Log success message
+          console.log(response); 
         },
         error: function (_xhr, _status, error) {
           refreshCalendar();
-          console.error(error); // Log error message
-          // Handle errors and provide feedback to the user
+          console.error(error); 
         },
       });
     },
@@ -148,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
           start: arg.event.start.toISOString(),
           end: arg.event.end
             ? arg.event.end.toISOString()
-            : arg.event._instance.range.end.toISOString(), // Check if the event has an end time
+            : arg.event._instance.range.end.toISOString(), 
           allDay: arg.event.allDay,
           title: arg.event.title,
         }),
@@ -267,9 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function addTask() {
     // Validate all task fields
     console.assert(validateTaskFields(), "Task fields are not valid");
-    // if (!validateTaskFields()) {
-    //   return; // Exit if validation fails
-    // }
+
 
     let title = $("#taskName").val();
     let duration = Math.round(parseFloat($("#duration").val()));
@@ -412,9 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function addEvent() {
     // Validate all event fields
     console.assert(validateEventFields(), "Event fields are not valid");
-    // if (!validateEventFields()) {
-    //   return; // Exit if validation fails
-    // }
+
     var title = $("#eventName").val();
     var startDate = $("#firstDate").val();
     var startTime = $("#firstTime").val();
@@ -848,9 +839,6 @@ function validateSettings() {
 
 function saveSettings() {
   console.assert(validateSettings(), "Settings are not valid");
-  //   if (!validateSettings()) {
-  //     return;
-  //   }
   var earliestTime = $("#earliestTime").val();
   var latestTime = $("#latestTime").val();
   var idealChunkSize = $("#idealChunkSize").val();
@@ -896,23 +884,15 @@ function logout() {
 
 function toggleSidebar(type) {
   if (type === "task") {
-    //$('#tasksidebar').show();
-    //$('#eventsidebar').hide();
     document.getElementById("taskSidebar").style.display = "block";
     document.getElementById("eventSidebar").style.display = "none";
     document.getElementById("eventAdder").style.display = "block";
     document.getElementById("taskAdder").style.display = "none";
-    // $('#taskAdder').hide();
-    //$('#eventAdder').show();
   } else if (type === "event") {
-    //$('#tasksidebar').hide();
-    //$('#eventsidebar').show();
     document.getElementById("taskSidebar").style.display = "none";
     document.getElementById("eventSidebar").style.display = "block";
     document.getElementById("eventAdder").style.display = "nonee";
     document.getElementById("taskAdder").style.display = "block";
-    //$('#eventAdder').hide();
-    //$('#taskAdder').show();
   }
 }
 

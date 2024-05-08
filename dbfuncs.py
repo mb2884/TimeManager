@@ -313,11 +313,6 @@ def delete_all(user_id):
                 database.AppUser).filter_by(id=user_id).first()
             session.delete(user_settings_to_delete)
 
-            # # Retreive the user to be deleted
-            # user_to_delete = session.query(
-            #     database.AppUser).filter_by(id=user_id).first()
-            # session.delete(user_to_delete)
-
             session.commit()
             print(
                 f"All mention of user with ID {user_id} has been deleted successfully.")
