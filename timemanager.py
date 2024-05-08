@@ -11,7 +11,6 @@ import datetime
 import os
 import flask
 from flask import request, jsonify
-import flask_talisman
 import dbfuncs as database
 import auth
 import tasksplitter
@@ -31,8 +30,6 @@ app.static_folder = os.path.join(
 
 dotenv.load_dotenv()
 app.secret_key = os.getenv('APP_SECRET_KEY')
-
-flask_talisman.Talisman(app, content_security_policy=None)
 
 # ----------------------------------------------------------------------
 
