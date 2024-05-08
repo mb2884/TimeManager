@@ -8,6 +8,6 @@ REM Create file .coverage
 python -m coverage run timemanager.py
 
 REM Create directory htmlcov
-python -m coverage html --omit=auth.py,tasksplitter.py
+python -m coverage html
 
 REM View the results, htmlcov\index.html, using a browser
